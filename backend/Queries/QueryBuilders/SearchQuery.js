@@ -74,7 +74,6 @@ module.exports = class SearchQuery {
     this.#query += this.#sortByQuery;
     this.#query += this.#limitQuery;
     this.#query += this.#pagination;
-    console.log(db.prepare(this.#query));
     return db.prepare(this.#query).all({ ...this.#params });
   }
 };
