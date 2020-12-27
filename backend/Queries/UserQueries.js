@@ -21,7 +21,7 @@ const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
     delete user.password;
     delete user.email;
     delete user.isAdmin;
-    user.roles = populateRoles(user.id);
+    delete user.id;
   });
 
   return users;
@@ -31,6 +31,7 @@ const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
 Used to check if email or username is already registered to a user
 Made dynamic 
  */
+
 const existsBy = (param) => {
   let res = new SearchQuery({
     TABLE: "users",
@@ -52,7 +53,7 @@ const userAuthentication = ({ email, password }) => {
 
   user = user[0];
   if (user) {
-    user.roles = populateRoles(user.id);
+    user.roles = getUserRoles(user);
     delete user.password;
   }
   return user;
@@ -69,26 +70,40 @@ const createUser = (user) => {
     .run({ ...user });
 };
 
-/* Matches roles to a user when fetched from the database. */
-const populateRoles = (id) => {
-  let roles = [];
+/* Fetches what forums a user is moderator in */
+const getModeratorRights = (id) => {
+  let editorPermissions = [];
   let statement = db.prepare(`
-    SELECT role FROM users, usersXroles, roles
-    WHERE users.id = $id
-    AND usersXroles.userId = users.id 
-    AND roles.id = usersXroles.roleId
-    GROUP BY ROLE
+  SELECT url FROM moderatorsXforums, forums
+  WHERE userId = $id 
+  AND forums.id = moderatorsXforums.forumId
+  GROUP BY url
   `);
   let result = statement.all({ id: id });
-  result.forEach((role) => {
-    roles.push(role["role"]);
+  result.forEach((val) => {
+    editorPermissions.push(val.url);
   });
+  return editorPermissions;
+};
+
+const getUserRoles = (user) => {
+  let roles = {
+    USER: true,
+  };
+  let editorPermissions = getModeratorRights(user.id);
+  if (editorPermissions.length) {
+    roles["MODERATOR"] = editorPermissions;
+  }
+  if (user.isAdmin) {
+    roles["ADMIN"] = true;
+  }
+
   return roles;
 };
 
 module.exports = {
   userSearch,
-  populateRoles,
+  getModeratorRights,
   userAuthentication,
   createUser,
   existsBy,

@@ -18,6 +18,7 @@ module.exports = class Server {
   start() {
     this.app.use(express.json());
     this.#addSession();
+    this.#addAcl();
     this.#addLogger();
     this.#addRouter();
     this.#run();
@@ -33,6 +34,10 @@ module.exports = class Server {
         store: store({ dbPath: "./database.db" }),
       })
     );
+  }
+
+  #addAcl() {
+    this.app.use(require("./middleware/ACL/ACL"));
   }
 
   #addLogger() {

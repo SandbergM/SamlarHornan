@@ -4,6 +4,6 @@ const router = express.Router();
 
 router.get("", userController.memberSearch);
 router.post("", userController.registerAccount);
-router.put("", userController.updateAccount);
+router.put("/:id", userController.updateAccount);
 
 module.exports = router;
