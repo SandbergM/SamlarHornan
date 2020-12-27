@@ -4,7 +4,7 @@ module.exports = (req, res, next) => {
   let userRoles = ["*"];
 
   if (req.session.user) {
-    userRoles = [...userRoles, ...Object.keys(req.session.user.roles || {})];
+    userRoles = [...userRoles, ...(req.session.user.roles || [])];
   } else {
     userRoles.push("ANONYMOUS");
   }

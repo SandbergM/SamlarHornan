@@ -20,26 +20,10 @@ const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
   users.forEach((user) => {
     delete user.password;
     delete user.email;
-    delete user.isAdmin;
     delete user.id;
   });
 
   return users;
-};
-
-/* 
-Used to check if email or username is already registered to a user
-Made dynamic 
- */
-
-const existsBy = (param) => {
-  let res = new SearchQuery({
-    TABLE: "users",
-    EQUAL: {
-      [Object.keys(param)[0].toString()]: Object.values(param)[0].toString(),
-    },
-  }).run();
-  return res.length !== 0;
 };
 
 /* User-login */
@@ -53,58 +37,29 @@ const userAuthentication = ({ email, password }) => {
 
   user = user[0];
   if (user) {
-    user.roles = getUserRoles(user);
+    user.roles = getUserRoles(user.id);
     delete user.password;
   }
   return user;
 };
 
-const createUser = (user) => {
-  user.isAdmin = 0;
-  user.password = Encrypt.multiEncrypt(user.password);
-  return db
-    .prepare(
-      `INSERT INTO users (${Object.keys(user)})
-       VALUES (${Object.keys(user).map((x) => "$" + x)})`
-    )
-    .run({ ...user });
-};
-
 /* Fetches what forums a user is moderator in */
-const getModeratorRights = (id) => {
-  let editorPermissions = [];
+const getUserRoles = (id) => {
+  let roles = ["USER"];
   let statement = db.prepare(`
-  SELECT url FROM moderatorsXforums, forums
-  WHERE userId = $id 
-  AND forums.id = moderatorsXforums.forumId
-  GROUP BY url
+  SELECT type FROM roles, usersXroles
+  WHERE usersXroles.userId = $id 
+  AND roles.id = usersXroles.roleId
+  GROUP BY type
   `);
   let result = statement.all({ id: id });
   result.forEach((val) => {
-    editorPermissions.push(val.url);
+    roles.push(val.type);
   });
-  return editorPermissions;
-};
-
-const getUserRoles = (user) => {
-  let roles = {
-    USER: true,
-  };
-  let editorPermissions = getModeratorRights(user.id);
-  if (editorPermissions.length) {
-    roles["MODERATOR"] = editorPermissions;
-  }
-  if (user.isAdmin) {
-    roles["ADMIN"] = true;
-  }
-
   return roles;
 };
 
 module.exports = {
   userSearch,
-  getModeratorRights,
   userAuthentication,
-  createUser,
-  existsBy,
 };

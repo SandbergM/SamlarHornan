@@ -15,7 +15,7 @@
         "DELETE" : "ADMIN"
     },
 
-    "/api/v1/thread": 
+    "/api/v1/threads": 
     {
         "GET": "USER, MODERATOR, ADMIN", 
         "POST" : "USER, MODERATOR, ADMIN",
