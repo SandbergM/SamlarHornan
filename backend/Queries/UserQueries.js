@@ -23,15 +23,6 @@ const userSearch = (params) => {
   return users;
 };
 
-const deleteUser = (id) => {
-  return (
-    id &&
-    db.prepare(`DELETE FROM comments where userId = $id`).run({ id }) &&
-    db.prepare(`DELETE FROM usersXroles where userId = $id`).run({ id }) &&
-    db.prepare(`DELETE FROM users where id = $id`).run({ id })
-  );
-};
-
 const userAuthentication = (params) => {
   const { email, password } = params;
   let user = new SearchQuery({
@@ -55,10 +46,11 @@ const getUserRolesAndPermissions = (id) => {
   let statement = db.prepare(`
   SELECT * FROM roles, usersXroles, forums
   WHERE usersXroles.userId = $id 
-  AND roles.id = usersXroles.roleId
+  AND usersXroles.roleId = roles.id 
   GROUP BY forumId
   `);
   let result = statement.all({ id: id });
+  console.log(result);
   result.forEach((val) => {
     roles.push(val.type);
     permissions[val.url] = val.forumId;
@@ -69,5 +61,4 @@ const getUserRolesAndPermissions = (id) => {
 module.exports = {
   userSearch,
   userAuthentication,
-  deleteUser,
 };

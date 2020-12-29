@@ -1,7 +1,7 @@
-const { forumSearch } = require("../Queries/ForumQueries");
-const { existsBy, saveToDb } = require("../Queries/SharedQueries");
+const { forumSearch, removeForum } = require("../Queries/ForumQueries");
 const { missingField } = require("../Helpers/ErrorHandler");
 const Forum = require("../models/Forum");
+const { existsBy, saveToDb } = require("../Queries/SharedQueries");
 
 const createForum = (req, res) => {
   const { name, description, url } = req.body;
@@ -11,12 +11,12 @@ const createForum = (req, res) => {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
-  let taken = checkUniqueFields(req.body);
-  if (taken) {
-    return res.status(409).send(taken);
+  if (existsBy("forums", { name, url })) {
+    return res.status(409).send(`Name or url already taken`);
   }
 
   let forum = saveToDb("forums", new Forum({ name, description, url }));
+  saveToDb("roles", { type: "MODERATOR", forumId: forum.lastInsertRowid });
   res.status(forum ? 200 : 400).send(forum ? forum : `Bad request`);
 };
 
@@ -26,15 +26,18 @@ const forumParamSearch = (req, res) => {
   res.status(found ? 200 : 400).send(found ? forums : `Not found`);
 };
 
-const updateForum = () => {};
-
-const checkUniqueFields = (params) => {
-  const { url, name } = params;
-  return existsBy("forums", { url, name });
+const deleteForum = (req, res) => {
+  if (!existsBy("forums", { id: req.params.id })) {
+    return res.status(404).send(`Not found`);
+  }
+  res.status(200).send({ deletedForum: removeForum(req.params.id) });
 };
+
+const updateForum = () => {};
 
 module.exports = {
   createForum,
   forumParamSearch,
   updateForum,
+  deleteForum,
 };

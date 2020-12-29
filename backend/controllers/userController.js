@@ -1,5 +1,9 @@
-const { userSearch, deleteUser } = require("../queries/UserQueries");
-const { existsBy, saveToDb } = require("../Queries/SharedQueries");
+const { userSearch } = require("../queries/UserQueries");
+const {
+  existsBy,
+  saveToDb,
+  removeFromDb,
+} = require("../Queries/SharedQueries");
 const { missingField } = require("../Helpers/ErrorHandler");
 const User = require("../models/User");
 
@@ -35,7 +39,10 @@ const deleteAccount = (req, res) => {
   if (!existsBy("users", { id: req.params.id })) {
     return res.status(404).send(`Not found`);
   }
-  res.status(200).send(deleteUser(req.params.id));
+  removeFromDb("comments", { userId: req.params.id });
+  removeFromDb("usersXroles", { userId: req.params.id });
+  removeFromDb("users", { id: req.params.id });
+  res.status(200).send({ deletedUser: true });
 };
 
 module.exports = {

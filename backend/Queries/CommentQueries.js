@@ -1,10 +1,9 @@
 const SearchQuery = require("./QueryBuilders/SearchQuery");
-const sqlite3 = require("better-sqlite3");
-const db = sqlite3("./database.db");
+const DeleteQuery = require("./QueryBuilders/DeleteQuery");
 
 const commentSearch = (params) => {
   const { threadId, userId, message, page, sortBy, orderBy } = params;
-  let forums = new SearchQuery({
+  return new SearchQuery({
     TABLE: "comments",
     LIKE: { message },
     EQUAL: { threadId, userId },
@@ -12,21 +11,13 @@ const commentSearch = (params) => {
     PAGE: { page },
     SORT: { sortBy, orderBy },
   }).run();
-  return forums;
 };
 
-const deleteComment = (params) => {
-  return db
-    .prepare(
-      `
-  DELETE FROM comments
-  WHERE id = $id
-  `
-    )
-    .run({ ...params });
+const removeComment = (id) => {
+  return new DeleteQuery({ TABLE : "comments", ENTITY : {id}})
 };
 
 module.exports = {
   commentSearch,
-  deleteComment,
+  removeComment,
 };

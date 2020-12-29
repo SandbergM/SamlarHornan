@@ -9,7 +9,7 @@
 
     "/api/v1/forums": 
     { 
-        "GET": "USER, MODERATOR, ADMIN", 
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN", 
         "POST" : "ADMIN",
         "PUT" : "ADMIN",  
         "DELETE" : "ADMIN"
