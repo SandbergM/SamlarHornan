@@ -15,9 +15,17 @@
         "DELETE" : "ADMIN"
     },
 
-    "/api/v1/threads": 
+    "/api/v1/threads":
     {
-        "GET": "USER, MODERATOR, ADMIN", 
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN", 
+        "POST" : "USER, MODERATOR, ADMIN",
+        "PUT" : "MODERATOR, ADMIN",  
+        "DELETE" : "MODERATOR, ADMIN"
+    },
+
+    "/api/v1/comments": 
+    {
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN", 
         "POST" : "USER, MODERATOR, ADMIN",
         "PUT" : "MODERATOR, ADMIN",  
         "DELETE" : "MODERATOR, ADMIN"

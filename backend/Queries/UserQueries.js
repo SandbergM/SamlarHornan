@@ -3,11 +3,8 @@ const Encrypt = require("../middleware/Encryption/Encrypt");
 const sqlite3 = require("better-sqlite3");
 const db = sqlite3("./database.db");
 
-/*
-General user-search
-The SearchQuery-class filters and only use buildes with the fields where the value is not undefined
-*/
-const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
+const userSearch = (params) => {
+  const { username, email, id, page, sortBy, orderBy } = params;
   let users = new SearchQuery({
     TABLE: "users",
     LIKE: { username },
@@ -26,10 +23,17 @@ const userSearch = ({ username, email, id, page, sortBy, orderBy }) => {
   return users;
 };
 
-/* User-login */
-const userAuthentication = ({ email, password }) => {
-  console.log({ email, password });
-  if (!email || !password) return null;
+const deleteUser = (id) => {
+  return (
+    id &&
+    db.prepare(`DELETE FROM comments where userId = $id`).run({ id }) &&
+    db.prepare(`DELETE FROM usersXroles where userId = $id`).run({ id }) &&
+    db.prepare(`DELETE FROM users where id = $id`).run({ id })
+  );
+};
+
+const userAuthentication = (params) => {
+  const { email, password } = params;
   let user = new SearchQuery({
     TABLE: "users",
     EQUAL: { email, password: Encrypt.multiEncrypt(password) },
@@ -37,29 +41,33 @@ const userAuthentication = ({ email, password }) => {
 
   user = user[0];
   if (user) {
-    user.roles = getUserRoles(user.id);
+    let { roles, permissions } = getUserRolesAndPermissions(user.id);
+    user.roles = roles;
+    user.permissions = permissions;
     delete user.password;
   }
   return user;
 };
 
-/* Fetches what forums a user is moderator in */
-const getUserRoles = (id) => {
+const getUserRolesAndPermissions = (id) => {
   let roles = ["USER"];
+  let permissions = {};
   let statement = db.prepare(`
-  SELECT type FROM roles, usersXroles
+  SELECT * FROM roles, usersXroles, forums
   WHERE usersXroles.userId = $id 
   AND roles.id = usersXroles.roleId
-  GROUP BY type
+  GROUP BY forumId
   `);
   let result = statement.all({ id: id });
   result.forEach((val) => {
     roles.push(val.type);
+    permissions[val.url] = val.forumId;
   });
-  return roles;
+  return { roles: [...new Set(roles)], permissions };
 };
 
 module.exports = {
   userSearch,
   userAuthentication,
+  deleteUser,
 };

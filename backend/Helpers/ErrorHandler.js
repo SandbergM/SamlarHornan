@@ -6,6 +6,16 @@ const missingField = (fields) => {
   }
 };
 
+const sqliteBoolean = (bool) => {
+  switch (bool.toLowerCase()) {
+    case "true":
+      return 0;
+    case "false":
+      return 1;
+  }
+};
+
 module.exports = {
   missingField,
+  sqliteBoolean,
 };

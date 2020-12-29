@@ -19,6 +19,7 @@ module.exports = class Server {
     this.app.use(express.json());
     this.#addSession();
     this.#addAcl();
+    this.#addJsonCheck();
     this.#addLogger();
     this.#addRouter();
     this.#run();
@@ -41,7 +42,20 @@ module.exports = class Server {
   }
 
   #addLogger() {
+    // Used for debugging purposes
     this.app.use(require("./middleware/Logger/Logger"));
+  }
+
+  #addJsonCheck() {
+    this.app.use((error, req, res, next) => {
+      if (error) {
+        res.status(500);
+        res.json({
+          error: "Something went wrong - probably badly formatted JSON",
+          errorDetails: error,
+        });
+      }
+    });
   }
 
   #addRouter() {

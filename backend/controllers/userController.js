@@ -1,9 +1,9 @@
-const { userSearch, createUser } = require("../queries/UserQueries");
-const { existsBy, insert } = require("../Queries/SharedQueries");
+const { userSearch, deleteUser } = require("../queries/UserQueries");
+const { existsBy, saveToDb } = require("../Queries/SharedQueries");
 const { missingField } = require("../Helpers/ErrorHandler");
 const User = require("../models/User");
 
-const memberSearch = (req, res) => {
+const userParamSearch = (req, res) => {
   let users = userSearch(req.query);
   let found = users.length;
   res.status(found ? 200 : 404).json(found ? users : `Not found`);
@@ -27,13 +27,20 @@ const registerAccount = (req, res) => {
     return res.status(409).send(`Username or email already taken`);
   }
 
-  let user = insert("users", new User({ ...req.body }));
+  let user = saveToDb("users", new User({ ...req.body }));
 
   res.status(user ? 200 : 401).send(user ? user : `Could not process request`);
 };
+const deleteAccount = (req, res) => {
+  if (!existsBy("users", { id: req.params.id })) {
+    return res.status(404).send(`Not found`);
+  }
+  res.status(200).send(deleteUser(req.params.id));
+};
 
 module.exports = {
-  memberSearch,
+  userParamSearch,
   registerAccount,
   updateAccount,
+  deleteAccount,
 };

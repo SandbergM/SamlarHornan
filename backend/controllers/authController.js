@@ -1,12 +1,22 @@
 const { userAuthentication } = require("../queries/UserQueries");
+const { missingField } = require("../Helpers/ErrorHandler");
 
 const signIn = (req, res) => {
+  const { email, password } = req.body;
+
+  let requestIncomplete = missingField({ email, password });
+  if (requestIncomplete) {
+    return res.status(403).send(`Missing : ${requestIncomplete}`);
+  }
+
   let user = userAuthentication(req.body);
-  req.session.user = user;
+
   if (user) {
+    req.session.user = user;
     return res.status(200).send({ authenticated: true });
   }
-  res.status(401).send(`Not found`);
+
+  res.status(401).send(`Unauthorized, wrong password or email`);
 };
 
 const logout = (req, res) => {

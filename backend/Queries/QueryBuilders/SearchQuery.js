@@ -9,7 +9,7 @@ module.exports = class SearchQuery {
   #pagination = "";
   #limitNumber = "";
   #limitQuery = "";
-  #bannedParams = ["password", "isAdmin"];
+  #bannedParams = ["password"];
   #params = {};
 
   constructor({ TABLE, LIKE, EQUAL, LIMIT, PAGE, SORT }) {
@@ -39,7 +39,9 @@ module.exports = class SearchQuery {
   #sortBy({ sortBy, orderBy }) {
     if (this.#bannedParams.includes(sortBy)) return "";
     if (sortBy) {
-      if (orderBy) {
+      if (!orderBy) {
+        orderBy = "ASC";
+      } else {
         orderBy = orderBy.toUpperCase() === "ASC" ? " ASC" : " DESC";
       }
       return `ORDER BY ${sortBy} ${orderBy} `;
