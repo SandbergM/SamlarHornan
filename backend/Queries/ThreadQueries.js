@@ -13,9 +13,6 @@ const threadSearch = (params) => {
   return threads;
 };
 
-const updateThread = (params) => {};
-
 module.exports = {
   threadSearch,
-  updateThread,
 };

@@ -1,4 +1,4 @@
-const { userAuthentication } = require("../queries/UserQueries");
+const { userAuthentication } = require("../queries/AuthQueries");
 const { missingField } = require("../Helpers/ErrorHandler");
 
 const signIn = (req, res) => {

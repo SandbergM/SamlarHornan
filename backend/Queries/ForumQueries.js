@@ -21,13 +21,19 @@ const removeForum = (id) => {
   }).run();
 
   for (let thread of threadsToDelete) {
-    new DeleteQuery({ TABLE: "comments", ENTITY: { threadId: thread.id } }).run();
+    new DeleteQuery({
+      TABLE: "comments",
+      ENTITY: { threadId: thread.id },
+    }).run();
   }
   let role = new SearchQuery({ TABLE: "roles", EQUAL: { forumId: id } }).run();
-  new DeleteQuery({ TABLE: "usersXroles", ENTITY: { forumId: role.forumId } }).run();
-  new DeleteQuery({ TABLE: "threads", ENTITY: { forumId: id } }).run();
-  new DeleteQuery({ TABLE: "roles", ENTITY: { forumId: id } }).run();
-  new DeleteQuery({ TABLE: "forums", ENTITY: { id: id } }).run();
+  new DeleteQuery({
+    TABLE: "usersXroles",
+    ENTITY: { forumId: role.forumId },
+  }).run();
+  new DeleteQuery({ TABLE: "threads", PARAMS: { forumId: id } }).run();
+  new DeleteQuery({ TABLE: "roles", PARAMS: { forumId: id } }).run();
+  new DeleteQuery({ TABLE: "forums", PARAMS: { id: id } }).run();
   return true;
 };
 

@@ -3,6 +3,9 @@ const { missingField } = require("../Helpers/ErrorHandler");
 const Forum = require("../models/Forum");
 const { existsBy, saveToDb } = require("../Queries/SharedQueries");
 
+/*
+# CREATE
+*/
 const createForum = (req, res) => {
   const { name, description, url } = req.body;
   let requestIncomplete = missingField({ name, description, url });
@@ -20,20 +23,29 @@ const createForum = (req, res) => {
   res.status(forum ? 200 : 400).send(forum ? forum : `Bad request`);
 };
 
+/*
+# CREATE
+*/
 const forumParamSearch = (req, res) => {
   let forums = forumSearch(req.query);
   let found = forums.length;
   res.status(found ? 200 : 400).send(found ? forums : `Not found`);
 };
 
+/*
+# CREATE
+*/
+const updateForum = () => {};
+
+/*
+# DELETE
+*/
 const deleteForum = (req, res) => {
   if (!existsBy("forums", { id: req.params.id })) {
     return res.status(404).send(`Not found`);
   }
   res.status(200).send({ deletedForum: removeForum(req.params.id) });
 };
-
-const updateForum = () => {};
 
 module.exports = {
   createForum,

@@ -4,6 +4,9 @@ const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const { existsBy, saveToDb } = require("../Queries/SharedQueries");
 const Comment = require("../models/Comment");
 
+/*
+# CREATE
+*/
 const createComment = (req, res) => {
   const { message, highlighted, threadId } = req.body;
 
@@ -33,14 +36,22 @@ const createComment = (req, res) => {
     .send(existsBy("comments", { id: savedComment.lastInsertRowid }));
 };
 
+/*
+# READ
+*/
 const commentParamSearch = (req, res) => {
   let comments = commentSearch(req.query);
-  if (comments.length === 0) {
-    return res.status(404).send(`Not found`);
-  }
-  res.status(200).send(comments);
+  let found = comments.length;
+  res.status(found ? 200 : 404).send(found ? comments : `Not found`);
 };
 
+/*
+# UPDATE
+*/
+
+/*
+# DELETE
+*/
 const deleteComment = (req, res) => {
   const { id } = req.params;
 
@@ -59,8 +70,8 @@ const deleteComment = (req, res) => {
   if (!comment) {
     return res.status(404).send(`Not found`);
   }
-  let deleted = removeComment( id )
-  res.status(deleted ? 200 : 400).send({ commentDeleted : deleted });
+  let deleted = removeComment(id);
+  res.status(deleted ? 200 : 400).send({ commentDeleted: deleted });
 };
 
 module.exports = {

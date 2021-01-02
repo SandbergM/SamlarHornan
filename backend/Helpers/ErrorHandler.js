@@ -15,7 +15,13 @@ const sqliteBoolean = (bool) => {
   }
 };
 
+const validEmail = (email) => {
+  let validEmailPattern = /^[^ ]+@[^ ]+\-[a-z]{2,3}$/;
+  return email.matches(validEmailPattern);
+};
+
 module.exports = {
   missingField,
   sqliteBoolean,
+  validEmail,
 };

@@ -5,10 +5,10 @@ module.exports = class DeleteQuery {
   #query = "";
   #params = {};
 
-  constructor({ TABLE, ENTITY }) {
+  constructor({ TABLE, PARAMS }) {
     this.#query += ` DELETE FROM ${TABLE} `;
-    this.#query += this.#conditions(ENTITY);
-    this.#params = { ...ENTITY };
+    this.#query += this.#conditions(PARAMS);
+    this.#params = { ...PARAMS };
   }
 
   #conditions(params) {
@@ -26,10 +26,8 @@ module.exports = class DeleteQuery {
 
   run() {
     if (Object.keys(this.#params).length) {
-      console.log("DELETE");
       return db.prepare(this.#query).run({ ...this.#params });
     }
-    console.log("NOT DELETE");
     return false;
   }
 };

@@ -1,6 +1,6 @@
 const SearchQuery = require("./QueryBuilders/SearchQuery");
 const InsertQuery = require("./QueryBuilders/InsertQuery");
-const DeleteQuery = require("./QueryBuilders/DeleteQuery");
+const UpdateQuery = require("./QueryBuilders/UpdateQuery");
 const Encrypt = require("../Middleware/Encryption/Encrypt");
 
 const existsBy = (table, params) => {
@@ -29,15 +29,22 @@ const saveToDb = (table, params) => {
   return result;
 };
 
-const removeFromDb = (table, params) => {
-  return new DeleteQuery({
+const updateDb = (table, id, params) => {
+  if (params.password) {
+    params.password = Encrypt.multiEncrypt(params.password);
+  }
+  let result = new UpdateQuery({
     TABLE: table,
-    ENTITY: { ...params },
+    ID: id,
+    PARAMS: params,
   }).run();
+
+  delete result.password;
+  return result;
 };
 
 module.exports = {
   existsBy,
   saveToDb,
-  removeFromDb,
+  updateDb,
 };

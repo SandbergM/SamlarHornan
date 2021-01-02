@@ -18,7 +18,6 @@ module.exports = class InsertQuery {
     let query = "";
     query += this.#insert;
     query += this.#fields;
-    console.log(db.prepare(query));
     return db.prepare(query).run({ ...this.#params });
   }
 };
