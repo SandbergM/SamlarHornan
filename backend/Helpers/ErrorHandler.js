@@ -1,7 +1,8 @@
 const missingField = (fields) => {
-  for (let field of Object.entries(fields)) {
-    if (!field[1]) {
-      return field[0];
+  console.log(fields);
+  for (let [key, val] of Object.entries(fields)) {
+    if (!val) {
+      return key;
     }
   }
 };

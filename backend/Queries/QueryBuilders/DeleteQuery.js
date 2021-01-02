@@ -5,10 +5,10 @@ module.exports = class DeleteQuery {
   #query = "";
   #params = {};
 
-  constructor({ TABLE, PARAMS }) {
+  constructor({ TABLE, ENTITY }) {
     this.#query += ` DELETE FROM ${TABLE} `;
-    this.#query += this.#conditions(PARAMS);
-    this.#params = { ...PARAMS };
+    this.#query += this.#conditions(ENTITY);
+    this.#params = { ...ENTITY };
   }
 
   #conditions(params) {

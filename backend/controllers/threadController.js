@@ -46,6 +46,9 @@ const updateThread = (req, res) => {
   const { id } = req.params;
   let { user } = req.session;
 
+  let thread = existsBy("threads", { id: id });
+  let forum = existsBy("forums", { id: thread.forumId });
+
   let isAdmin = user.roles.includes("ADMIN");
   let hasPermission = user.permissions[forum.url];
 
@@ -53,18 +56,16 @@ const updateThread = (req, res) => {
     return res.status(401).send(`Unauthorized`);
   }
 
-  let thread = existsBy("threads", { id: id });
   if (!thread) {
     return res.status(404).send(`Not found`);
   }
-  let forum = existsBy("forums", { id: thread.forumId });
 
   let update = updateDb("threads", id, {
-    ...new Thread({ ...req.body }),
+    ...new Thread({ ...req.body, forumId: undefined }),
   });
 
   if (!update) {
-    res.status(400).send(`Couldn't finalize update`);
+    return res.status(400).send(`Couldn't finalize update`);
   }
 
   res.status(200).send({ threadUpdated: true });

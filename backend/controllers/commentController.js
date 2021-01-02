@@ -54,24 +54,29 @@ const commentParamSearch = (req, res) => {
 */
 const deleteComment = (req, res) => {
   const { id } = req.params;
+  const { user } = req.session;
 
   let comment = existsBy("comments", { id: id });
-  let thread = existsBy("threads", { id: comment.threadId });
-  let forum = existsBy("forums", { id: thread.forumId });
 
-  let { user } = req.session;
-  let isAdmin = user.roles.includes("ADMIN");
-  let hasPermission = user.permissions[forum.url];
-
-  if (!isAdmin && !hasPermission) {
+  if (!hasPermission(user, comment)) {
     return res.status(401).send(`Unauthorized`);
   }
 
   if (!comment) {
     return res.status(404).send(`Not found`);
   }
+
   let deleted = removeComment(id);
-  res.status(deleted ? 200 : 400).send({ commentDeleted: deleted });
+
+  res.status(deleted ? 200 : 400).send(deleted);
+};
+
+const hasPermission = (user, comment) => {
+  let thread = existsBy("threads", { id: comment.threadId });
+  let forum = existsBy("forums", { id: thread.forumId });
+  let isAdmin = user.roles.includes("ADMIN");
+  let isSubModerator = user.permissions[forum.url];
+  return isAdmin || isSubModerator;
 };
 
 module.exports = {

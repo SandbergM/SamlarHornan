@@ -14,7 +14,7 @@ const commentSearch = (params) => {
 };
 
 const removeComment = (id) => {
-  return new DeleteQuery({ TABLE: "comments", ENTITY: { id } });
+  return new DeleteQuery({ TABLE: "comments", ENTITY: { id } }).run();
 };
 
 module.exports = {

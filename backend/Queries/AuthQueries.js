@@ -17,6 +17,7 @@ const userAuthentication = (params) => {
     user.permissions = permissions;
     delete user.password;
   }
+
   return user;
 };
 
@@ -24,15 +25,19 @@ const getUserRolesAndPermissions = (id) => {
   let roles = ["USER"];
   let permissions = {};
   let statement = db.prepare(`
-    SELECT * FROM roles, usersXroles, forums
-    WHERE usersXroles.userId = $id 
-    AND usersXroles.roleId = roles.id 
-    GROUP BY forumId
+      SELECT * FROM roles, usersXroles
+      LEFT JOIN forums ON roles.forumId = forums.id
+      WHERE usersXroles.userId = 1 
+      AND usersXroles.roleId = roles.id 
+      GROUP BY roles.id
     `);
+
   let result = statement.all({ id: id });
   result.forEach((val) => {
     roles.push(val.type);
-    permissions[val.url] = val.forumId;
+    if (val.url) {
+      permissions[val.url] = val.forumId;
+    }
   });
   return { roles: [...new Set(roles)], permissions };
 };
