@@ -1,14 +1,23 @@
 const { userSearch, removeUser } = require("../queries/UserQueries");
 const { existsBy, saveToDb } = require("../Queries/SharedQueries");
-const { missingField, validEmail } = require("../Helpers/ErrorHandler");
+const {
+  missingField,
+  validEmail,
+  validPassword,
+} = require("../Helpers/Validation");
 const User = require("../models/User");
 
 /*
 # CREATE
 */
 const registerAccount = (req, res) => {
-  const { email, username } = req.body;
+  const { email, username, password } = req.body;
   let requestIncomplete = missingField({ email, username });
+  let weakPassword = validPassword(password);
+
+  if (weakPassword) {
+    return res.status(400).send(weakPassword);
+  }
 
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);

@@ -1,6 +1,6 @@
 const { threadSearch } = require("../Queries/ThreadQueries");
 const { existsBy, saveToDb, updateDb } = require("../Queries/SharedQueries");
-const { missingField } = require("../Helpers/ErrorHandler");
+const { missingField } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const Thread = require("../models/Thread");
 

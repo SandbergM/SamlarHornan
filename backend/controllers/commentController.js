@@ -1,5 +1,5 @@
 const { commentSearch, removeComment } = require("../Queries/CommentQueries");
-const { missingField } = require("../Helpers/ErrorHandler");
+const { missingField, isNumber } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const { existsBy, saveToDb } = require("../Queries/SharedQueries");
 const Comment = require("../models/Comment");
@@ -55,7 +55,6 @@ const commentParamSearch = (req, res) => {
 const deleteComment = (req, res) => {
   const { id } = req.params;
   const { user } = req.session;
-
   let comment = existsBy("comments", { id: id });
 
   if (!hasPermission(user, comment)) {

@@ -1,5 +1,5 @@
 const { userAuthentication } = require("../queries/AuthQueries");
-const { missingField } = require("../Helpers/ErrorHandler");
+const { missingField } = require("../Helpers/Validation");
 
 const signIn = (req, res) => {
   const { email, password } = req.body;

@@ -1,5 +1,5 @@
 const { forumSearch, removeForum } = require("../Queries/ForumQueries");
-const { missingField } = require("../Helpers/ErrorHandler");
+const { missingField } = require("../Helpers/Validation");
 const Forum = require("../models/Forum");
 const { existsBy, saveToDb } = require("../Queries/SharedQueries");
 
