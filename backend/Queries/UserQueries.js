@@ -1,4 +1,5 @@
 const SearchQuery = require("./QueryBuilders/SearchQuery");
+const DeleteQuery = require("./QueryBuilders/DeleteQuery");
 
 const userSearch = (params) => {
   const { username, email, id, page, sortBy, orderBy } = params;
@@ -20,6 +21,15 @@ const userSearch = (params) => {
   return users;
 };
 
+const removeUser = (params) => {
+  const { id } = params;
+  new DeleteQuery({ TABLE: "usersXroles", ENTITY: { userId: id } }).run();
+  new DeleteQuery({ TABLE: "comments", ENTITY: { userId: id } }).run();
+  new DeleteQuery({ TABLE: "users", ENTITY: { id } }).run();
+  return true;
+};
+
 module.exports = {
   userSearch,
+  removeUser,
 };

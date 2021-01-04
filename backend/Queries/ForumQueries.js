@@ -31,9 +31,9 @@ const removeForum = (id) => {
     TABLE: "usersXroles",
     ENTITY: { forumId: role.forumId },
   }).run();
-  new DeleteQuery({ TABLE: "threads", PARAMS: { forumId: id } }).run();
-  new DeleteQuery({ TABLE: "roles", PARAMS: { forumId: id } }).run();
-  new DeleteQuery({ TABLE: "forums", PARAMS: { id: id } }).run();
+  new DeleteQuery({ TABLE: "threads", ENTITY: { forumId: id } }).run();
+  new DeleteQuery({ TABLE: "roles", ENTITY: { forumId: id } }).run();
+  new DeleteQuery({ TABLE: "forums", ENTITY: { id: id } }).run();
   return true;
 };
 

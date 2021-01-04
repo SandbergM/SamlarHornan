@@ -2,22 +2,17 @@ const sqlite3 = require("better-sqlite3");
 const db = sqlite3("./database.db");
 
 module.exports = class SearchQuery {
-  #search = "";
   #query = "";
-  #select = "";
-  #sortByQuery = "";
-  #pagination = "";
   #limitNumber = "";
-  #limitQuery = "";
   #bannedParams = ["password"];
   #params = {};
 
   constructor({ TABLE, LIKE, EQUAL, LIMIT, PAGE, SORT }) {
-    this.#search = `SELECT * FROM ${TABLE.split(",")} `;
-    this.#search += this.#searchCriterias({ LIKE, EQUAL });
-    this.#limitQuery = this.#limit(LIMIT || false) || "";
-    this.#pagination = this.#page(PAGE || false) || "";
-    this.#sortByQuery = this.#sortBy(SORT || false) || "";
+    this.#query += `SELECT * FROM ${TABLE.split(",")} `;
+    this.#query += this.#searchCriterias({ LIKE, EQUAL });
+    this.#query += this.#limit(LIMIT || false) || "";
+    this.#query += this.#page(PAGE || false) || "";
+    this.#query += this.#sortBy(SORT || false) || "";
     this.#params = { ...LIKE, ...EQUAL, ...LIMIT, ...PAGE, ...SORT };
   }
 
@@ -71,11 +66,6 @@ module.exports = class SearchQuery {
   };
 
   run() {
-    this.#query += this.#select;
-    this.#query += this.#search;
-    this.#query += this.#sortByQuery;
-    this.#query += this.#limitQuery;
-    this.#query += this.#pagination;
     return db.prepare(this.#query).all({ ...this.#params });
   }
 };

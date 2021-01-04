@@ -1,10 +1,10 @@
 const { userAuthentication } = require("../queries/AuthQueries");
-const { missingField } = require("../Helpers/Validation");
+const { requiredFields } = require("../Helpers/Validation");
 
 const signIn = (req, res) => {
   const { email, password } = req.body;
 
-  let requestIncomplete = missingField({ email, password });
+  let requestIncomplete = requiredFields({ email, password });
   if (requestIncomplete) {
     return res.status(403).send(`Missing : ${requestIncomplete}`);
   }

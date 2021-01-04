@@ -1,6 +1,6 @@
 const { threadSearch } = require("../Queries/ThreadQueries");
-const { existsBy, saveToDb, updateDb } = require("../Queries/SharedQueries");
-const { missingField } = require("../Helpers/Validation");
+const { findBy, saveToDb, updateDb } = require("../Queries/SharedQueries");
+const { requiredFields } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const Thread = require("../models/Thread");
 
@@ -9,12 +9,12 @@ const Thread = require("../models/Thread");
 */
 const createThread = (req, res) => {
   const { title, forumId } = req.body;
-  let requestIncomplete = missingField({ title, forumId });
+  let requestIncomplete = requiredFields({ title, forumId });
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
-  if (!existsBy("forums", { id: forumId })) {
+  if (!findBy("forums", { id: forumId })) {
     return res.status(400).send(`A forum with that id was not found`);
   }
 
@@ -46,8 +46,8 @@ const updateThread = (req, res) => {
   const { id } = req.params;
   let { user } = req.session;
 
-  let thread = existsBy("threads", { id: id });
-  let forum = existsBy("forums", { id: thread.forumId });
+  let thread = findBy("threads", { id: id });
+  let forum = findBy("forums", { id: thread.forumId });
 
   let isAdmin = user.roles.includes("ADMIN");
   let hasPermission = user.permissions[forum.url];

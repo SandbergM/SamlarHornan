@@ -1,4 +1,4 @@
-const missingField = (fields) => {
+const requiredFields = (fields) => {
   for (let [key, val] of Object.entries(fields)) {
     if (!val) {
       return key;
@@ -39,7 +39,7 @@ const validPassword = (password) => {
 };
 
 module.exports = {
-  missingField,
+  requiredFields,
   sqliteBoolean,
   validEmail,
   isNumber,

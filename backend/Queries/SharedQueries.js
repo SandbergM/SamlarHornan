@@ -3,7 +3,7 @@ const InsertQuery = require("./QueryBuilders/InsertQuery");
 const UpdateQuery = require("./QueryBuilders/UpdateQuery");
 const Encrypt = require("../Middleware/Encryption/Encrypt");
 
-const existsBy = (table, params) => {
+const findBy = (table, params) => {
   for (let param of Object.entries(params)) {
     if (param[1]) {
       let res = new SearchQuery({
@@ -44,7 +44,7 @@ const updateDb = (table, id, params) => {
 };
 
 module.exports = {
-  existsBy,
+  findBy,
   saveToDb,
   updateDb,
 };

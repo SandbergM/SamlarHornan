@@ -1,7 +1,7 @@
 const { userSearch, removeUser } = require("../queries/UserQueries");
-const { existsBy, saveToDb } = require("../Queries/SharedQueries");
+const { findBy, saveToDb } = require("../Queries/SharedQueries");
 const {
-  missingField,
+  requiredFields,
   validEmail,
   validPassword,
 } = require("../Helpers/Validation");
@@ -12,7 +12,7 @@ const User = require("../models/User");
 */
 const registerAccount = (req, res) => {
   const { email, username, password } = req.body;
-  let requestIncomplete = missingField({ email, username });
+  let requestIncomplete = requiredFields({ email, username });
   let weakPassword = validPassword(password);
 
   if (weakPassword) {
@@ -27,7 +27,7 @@ const registerAccount = (req, res) => {
     return res.status(400).send(`Invalid email`);
   }
 
-  if (existsBy("users", { email, username })) {
+  if (findBy("users", { email, username })) {
     return res.status(409).send(`Username or email already taken`);
   }
 
@@ -53,11 +53,14 @@ const updateAccount = (req, res) => {};
 # DELETE
 */
 const deleteAccount = (req, res) => {
-  if (!existsBy("users", { id: req.params.id })) {
+  const { id } = req.params;
+  if (!findBy("users", { id })) {
     return res.status(404).send(`Not found`);
   }
 
-  res.status(200).send({ deletedUser: removeUser(req.params.id) });
+  let deleted = removeUser({ id });
+
+  res.status(200).send({ deletedUser: deleted });
 };
 
 module.exports = {
