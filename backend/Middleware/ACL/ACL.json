@@ -1,0 +1,40 @@
+{
+    "/api/v1/users": 
+    { 
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN", 
+        "POST" : "ANONYMOUS",
+        "PUT" : "ADMIN",  
+        "DELETE" : "ADMIN"
+    },
+
+    "/api/v1/forums": 
+    { 
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN", 
+        "POST" : "ADMIN",
+        "PUT" : "ADMIN",  
+        "DELETE" : "ADMIN"
+    },
+
+    "/api/v1/threads":
+    {
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN", 
+        "POST" : "USER, MODERATOR, ADMIN",
+        "PUT" : "MODERATOR, ADMIN",  
+        "DELETE" : "MODERATOR, ADMIN"
+    },
+
+    "/api/v1/comments": 
+    {
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN", 
+        "POST" : "USER, MODERATOR, ADMIN",
+        "PUT" : "MODERATOR, ADMIN",  
+        "DELETE" : "MODERATOR, ADMIN"
+    },
+
+    "/api/v1/auth": 
+    { 
+        "GET" : "USER, ADMIN",
+        "POST": "ANONYMOUS", 
+        "DELETE" : "USER, ADMIN"
+    }
+}
