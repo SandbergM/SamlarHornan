@@ -6,7 +6,7 @@ const threadSearch = (params) => {
     TABLE: "threads",
     LIKE: { title },
     EQUAL: { forumId },
-    LIMIT: 100,
+    LIMIT: 25,
     PAGE: { page },
     SORT: { sortBy, orderBy },
   }).run();

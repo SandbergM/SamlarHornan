@@ -2,10 +2,11 @@ const SearchQuery = require("./QueryBuilders/SearchQuery");
 const DeleteQuery = require("./QueryBuilders/DeleteQuery");
 
 const forumSearch = (params) => {
-  const { name, description, url, page, sortBy, orderBy } = params;
+  const { name, description, url, page, sortBy, orderBy, categoryId } = params;
   let forums = new SearchQuery({
     TABLE: "forums",
     LIKE: { name, description, url },
+    EQUAL: { categoryId },
     LIMIT: 100,
     PAGE: { page },
     SORT: { sortBy, orderBy },

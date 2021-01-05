@@ -1,0 +1,29 @@
+@import "./siteTheme.scss";
+@import "./forum.scss";
+@import "./header.scss";
+
+* {
+  box-sizing: border-box;
+  border: 0 !important;
+}
+
+.App {
+  min-height: 100vh !important;
+  overflow-y: hidden;
+}
+
+.rounded {
+  border-radius: 10px;
+}
+.pointer {
+  cursor: pointer !important;
+}
+.no-margin {
+  margin: 0 !important;
+}
+.no-padding {
+  padding: 0 !important;
+}
+.oblique {
+  font-style: oblique;
+}

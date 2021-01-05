@@ -34,6 +34,8 @@ const createThread = (req, res) => {
 # READ
 */
 const threadParamSearch = (req, res) => {
+  let { forumUrl } = req.query;
+  req.query.forumId = findBy("forums", { url: forumUrl }).id;
   let threads = threadSearch(req.query);
   let found = threads.length;
   res.status(found ? 200 : 400).send(found ? threads : `Not found`);

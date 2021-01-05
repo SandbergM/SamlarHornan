@@ -7,8 +7,13 @@ const { findBy, saveToDb } = require("../Queries/SharedQueries");
 # CREATE
 */
 const createForum = (req, res) => {
-  const { name, description, url } = req.body;
-  let requestIncomplete = requiredFields({ name, description, url });
+  const { name, description, url, categoryId } = req.body;
+  let requestIncomplete = requiredFields({
+    name,
+    description,
+    url,
+    categoryId,
+  });
 
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
@@ -29,7 +34,7 @@ const createForum = (req, res) => {
 const forumParamSearch = (req, res) => {
   let forums = forumSearch(req.query);
   let found = forums.length;
-  res.status(found ? 200 : 400).send(found ? forums : `Not found`);
+  res.status(found ? 200 : 404).send(found ? forums : `Not found`);
 };
 
 /*
