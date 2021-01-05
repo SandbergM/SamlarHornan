@@ -36,9 +36,24 @@ const Header = (props) => {
         </NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
-          <Nav className="mr-auto" navbar>
-            <NavItem>
-              <NavLink href="/components/" className="secondary-tc">
+          <Nav className="row " navbar>
+            <NavItem className="col-12 col-xl-3 d-flex justify-content-around mt-2 mb-2">
+              <NavLink href="/components/" className="secondary-tc bold">
+                Components
+              </NavLink>
+            </NavItem>
+            <NavItem className="col-12 col-xl-3 d-flex justify-content-around mt-2 mb-2">
+              <NavLink href="/components/" className="secondary-tc bold">
+                Components
+              </NavLink>
+            </NavItem>
+            <NavItem className="col-12 col-xl-3 d-flex justify-content-around mt-2 mb-2">
+              <NavLink href="/components/" className="secondary-tc bold">
+                Components
+              </NavLink>
+            </NavItem>
+            <NavItem className="col-12 col-xl-3 d-flex justify-content-around">
+              <NavLink href="/components/" className="secondary-tc bold">
                 Components
               </NavLink>
             </NavItem>

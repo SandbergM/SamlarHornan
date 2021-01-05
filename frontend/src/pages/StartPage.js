@@ -9,13 +9,10 @@ const StartPage = () => {
   const [categorySearch, setCategorySearch] = useState("");
 
   const fetchOptions = async () => {
-    let tempArr = [
-      { id: 1, name: "Fotboll" },
-      { id: 2, name: "Simmning" },
-      { id: 3, name: "Bowling" },
-      { id: 4, name: "Frimärken" },
-    ];
-    setOptions(tempArr);
+    let res = await fetch(`/api/v1/categories`);
+    if (res.status === 200) {
+      setOptions(await res.json());
+    }
   };
 
   useEffect(() => {
@@ -26,10 +23,10 @@ const StartPage = () => {
     <div className="row d-flex justify-content-around">
       <div className="col-8 pt-5">
         <div className="row ">
-          <div className="col-8 ">
+          <div className="col-8">
             <SearchField
               onChange={setNameSearch}
-              placeholder={`Sök efter ett forum`}
+              placeholder={`Sök efter forum`}
             />
           </div>
           <div className="col-4">

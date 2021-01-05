@@ -3,7 +3,7 @@ import { Input } from "reactstrap";
 
 const SearchField = (props) => {
   return (
-    <div className="col-12 no-padding ">
+    <div className="col-12 no-padding">
       <Input
         type="text"
         placeholder={props.placeholder || `Skriv här...`}

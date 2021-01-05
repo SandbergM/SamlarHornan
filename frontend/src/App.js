@@ -25,7 +25,11 @@ function App() {
             <Switch>
               <Route exact path="/" component={StartPage} />
               <Route exact path="/forum/:forumUrl" component={ForumPage} />
-              <Route exact path="/thread/:threadId" component={ThreadPage} />
+              <Route
+                exact
+                path="/forum/:forumUrl/thread/:threadId"
+                component={ThreadPage}
+              />
               <Route exact path="*" component={PageNotFound} />
             </Switch>
           </main>

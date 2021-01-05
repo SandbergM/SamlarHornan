@@ -27,3 +27,16 @@
 .oblique {
   font-style: oblique;
 }
+.bold {
+  font-weight: bold;
+}
+
+.no-border {
+  border: none !important;
+}
+.transparent {
+  background-color: rgba(255, 255, 255, 0) !important;
+}
+.test {
+  background-color: black;
+}

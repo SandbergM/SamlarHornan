@@ -1,18 +1,19 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 const ThreadRow = ({ thread }) => {
   let history = useHistory();
+  let { forumUrl } = useParams();
 
-  //   const redirectToForum = (url) => {
-  //     history.push(`/forum/${url}`);
-  //   };
+  const redirectToThread = (id) => {
+    history.push(`/forum/${forumUrl}/thread/${id}`);
+  };
 
   return (
     <div
       className="row forum-row-container secondary-bgc rounded mt-2 primary-tc pointer pl-2"
       onClick={() => {
-        // redirectToForum(forum.url);
+        redirectToThread(thread.id);
       }}
     >
       <p className="col-12 forum-row-name">{thread.title}</p>

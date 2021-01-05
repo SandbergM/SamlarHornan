@@ -3,15 +3,30 @@ const DeleteQuery = require("./QueryBuilders/DeleteQuery");
 
 const forumSearch = (params) => {
   const { name, description, url, page, sortBy, orderBy, categoryId } = params;
-  let forums = new SearchQuery({
-    TABLE: "forums",
-    LIKE: { name, description, url },
-    EQUAL: { categoryId },
-    LIMIT: 100,
-    PAGE: { page },
-    SORT: { sortBy, orderBy },
-  }).run();
+  let forums =
+    new SearchQuery({
+      TABLE: "forums",
+      LIKE: { name, description, url },
+      EQUAL: { categoryId },
+      LIMIT: 100,
+      PAGE: { page },
+      SORT: { sortBy, orderBy },
+    }).run() || [];
+
+  forums.forEach((forum) => {
+    forum.threads = appendNumberOfThreads(forum.id);
+  });
+
   return forums;
+};
+
+const appendNumberOfThreads = (id) => {
+  let threads = new SearchQuery({
+    TABLE: "threads",
+    SELECT: "COUNT(threads.id), id",
+    EQUAL: { forumId: id },
+  }).run()[0];
+  return parseInt(Object.values(threads));
 };
 
 // Remove the forum and all of the associated entities from the DB

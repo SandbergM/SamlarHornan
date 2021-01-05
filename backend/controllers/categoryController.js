@@ -1,4 +1,4 @@
-const { forumSearch, removeForum } = require("../Queries/ForumQueries");
+const { categorySearch } = require("../Queries/CategoryQueries");
 
 /*
 # CREATE
@@ -9,9 +9,11 @@ const createCategory = (req, res) => {};
 # CREATE
 */
 const getCategories = (req, res) => {
-  let forums = forumSearch(req.query);
-  let found = forums.length;
-  res.status(found ? 200 : 404).send(found ? forums : `Not found`);
+  let categories = categorySearch();
+  let found = categories.length;
+  res.status(found ? 200 : 404).send(found ? categories : `Not found`);
 };
 
-module.exports = {};
+module.exports = {
+  getCategories,
+};

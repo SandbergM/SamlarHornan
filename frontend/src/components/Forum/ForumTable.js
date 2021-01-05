@@ -15,7 +15,6 @@ const ForumTable = ({ nameSearch, categorySearch }) => {
       setForums(null);
     }
   };
-
   useEffect(() => {
     fetchForums(nameSearch, categorySearch);
   }, [nameSearch.length, categorySearch]);

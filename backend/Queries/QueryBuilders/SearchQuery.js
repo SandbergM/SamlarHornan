@@ -7,8 +7,8 @@ module.exports = class SearchQuery {
   #bannedParams = ["password"];
   #params = {};
 
-  constructor({ TABLE, LIKE, EQUAL, LIMIT, PAGE, SORT }) {
-    this.#query += `SELECT * FROM ${TABLE.split(",")} `;
+  constructor({ TABLE, SELECT, LIKE, EQUAL, LIMIT, PAGE, SORT }) {
+    this.#query += `SELECT ${SELECT ? SELECT : "*"} FROM ${TABLE.split(",")} `;
     this.#query += this.#searchCriterias({ LIKE, EQUAL });
     this.#query += this.#limit(LIMIT || false) || "";
     this.#query += this.#page(PAGE || false) || "";
@@ -33,13 +33,14 @@ module.exports = class SearchQuery {
 
   #sortBy({ sortBy, orderBy }) {
     if (this.#bannedParams.includes(sortBy)) return "";
+    let order;
     if (sortBy) {
       if (!orderBy) {
-        orderBy = "ASC";
+        order = "ASC";
       } else {
-        orderBy = orderBy.toUpperCase() === "ASC" ? " ASC" : " DESC";
+        order = orderBy.toUpperCase() === "ASC" ? " ASC" : " DESC";
       }
-      return `ORDER BY ${sortBy} ${orderBy} `;
+      return `ORDER BY ${sortBy} ${order} `;
     }
   }
 

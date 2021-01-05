@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ThreadRow from "./ThreadRow";
 
-const ThreadTable = ({ forumUrl }) => {
+const ThreadTable = ({ forumUrl, threadTitle, sortBy }) => {
   const [threads, setThreads] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const fetchThreads = async () => {
     let result = await fetch(
-      `/api/v1/threads?forumUrl=${forumUrl}&page=${currentPage}`
+      `/api/v1/threads?forumUrl=${forumUrl}&page=${currentPage}&title=${threadTitle}`
     );
     console.log(result);
     if (result.status === 200) {
@@ -19,7 +19,7 @@ const ThreadTable = ({ forumUrl }) => {
 
   useEffect(() => {
     fetchThreads();
-  }, []);
+  }, [forumUrl, threadTitle]);
 
   return (
     <div className="col-12">
