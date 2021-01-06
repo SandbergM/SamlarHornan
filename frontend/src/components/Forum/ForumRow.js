@@ -14,8 +14,7 @@ const ForumRow = ({ forum }) => {
         redirectToForum(forum.url);
       }}
     >
-      <p className="col-8 forum-row-name mt-2">{forum.name}</p>
-      <p className="col-4 forum-row-threads mt-2">Trådar : {forum.threads}</p>
+      <p className="col-12 forum-row-name mt-2">{forum.name}</p>
       <p className="col-12 forum-row-description">{forum.description}</p>
     </div>
   );

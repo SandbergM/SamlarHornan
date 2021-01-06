@@ -8,7 +8,7 @@ const NewThread = (props) => {
   return (
     <div>
       <Button
-        className="col-12 rounded secondary-bgc primary-tc oblique new-thread-button mt-3 mb-2"
+        className="col-12 rounded secondary-bgc primary-tc oblique new-thread-button"
         onClick={toggle}
       >
         Skapa ny tråd

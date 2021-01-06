@@ -21,7 +21,7 @@ const StartPage = () => {
 
   return (
     <div className="d-flex justify-content-around">
-      <div className="col-8 pt-5">
+      <div className="col-12 col-lg-8 col-xl-6 pt-5">
         <div className="row ">
           <div className="col-8">
             <SearchField

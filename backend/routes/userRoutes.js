@@ -12,7 +12,7 @@ const limit = (maxAttempts) => {
 };
 
 router.get("", userController.userParamSearch);
-router.post("", limit(5), userController.registerAccount);
+router.post("", userController.registerAccount);
 router.put("/:id", userController.updateAccount);
 router.delete("/:id", userController.deleteAccount);
 

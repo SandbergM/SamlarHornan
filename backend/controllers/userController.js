@@ -16,23 +16,32 @@ const registerAccount = (req, res) => {
   let weakPassword = validPassword(password);
 
   if (weakPassword) {
-    return res.status(400).send(weakPassword);
+    res.statusMessage = weakPassword;
+    res.status(400).end();
   }
 
   if (requestIncomplete) {
-    return res.status(400).send(`Missing : ${requestIncomplete}`);
+    res.statusMessage = `Missing : ${requestIncomplete}`;
+    res.status(400).end();
   }
 
   if (!validEmail(email)) {
-    return res.status(400).send(`Invalid email`);
+    res.statusMessage = `Invalid Email`;
+    res.status(400).end();
   }
 
-  if (findBy("users", { email, username })) {
-    return res.status(409).send(`Username or email already taken`);
+  if (findBy("users", { email })) {
+    res.statusMessage = `Email already registered`;
+    res.status(409).end();
+  }
+
+  if (findBy("users", { username })) {
+    res.statusMessage = `Username already registered`;
+    res.status(409).end();
   }
 
   let user = saveToDb("users", new User({ ...req.body }));
-  res.status(user ? 200 : 401).send(user ? user : `Could not process request`);
+  res.status(user ? 200 : 404).send(user);
 };
 
 /*
@@ -55,7 +64,8 @@ const updateAccount = (req, res) => {};
 const deleteAccount = (req, res) => {
   const { id } = req.params;
   if (!findBy("users", { id })) {
-    return res.status(404).send(`Not found`);
+    res.statusMessage = `No user with id : ${id}`;
+    res.status(404).end();
   }
 
   let deleted = removeUser({ id });

@@ -16,8 +16,10 @@ const ThreadRow = ({ thread }) => {
         redirectToThread(thread.id);
       }}
     >
-      <p className="col-12 forum-row-name">{thread.title}</p>
-      <p className="col-12 forum-row-description">{thread.message}</p>
+      <p className="col-12 col-lg-8 forum-row-name mt-2 mb-0">{thread.title}</p>
+      <p className="col-12 col-lg-4 forum-row-name mt-2">
+        Svar {thread.comments}
+      </p>
     </div>
   );
 };
