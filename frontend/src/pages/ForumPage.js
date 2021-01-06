@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ThreadTable from "../components/Thread/ThreadTable";
 import SearchField from "../components/InputFields/SearchField";
@@ -7,8 +7,20 @@ import { UserContext } from "../context/UserContext";
 
 const StartPage = () => {
   const [threadTitle, setThreadTitle] = useState("");
+  const [forum, setForum] = useState(null);
+
   const { user } = useContext(UserContext);
   let { forumUrl } = useParams();
+
+  const fetchForumDetails = async () => {
+    let forum = await fetch(`/api/v1/forums?url=${forumUrl}`);
+    forum = await forum.json();
+    setForum(forum[0]);
+  };
+
+  useEffect(() => {
+    fetchForumDetails();
+  }, [forumUrl]);
 
   return (
     <div className="col-12 pt-3">
@@ -21,7 +33,7 @@ const StartPage = () => {
         </div>
         {user && (
           <div className="col-12 col-lg-4 mb-2">
-            <NewThread forumUrl={forumUrl} />
+            <NewThread forum={forum} />
           </div>
         )}
         <div className="col-12 mb-2">

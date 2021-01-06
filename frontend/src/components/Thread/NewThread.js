@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Modal,
@@ -10,7 +10,7 @@ import {
 } from "reactstrap";
 import { useHistory } from "react-router-dom";
 
-const NewThread = ({ forumUrl }) => {
+const NewThread = ({ forum }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
 
@@ -19,18 +19,11 @@ const NewThread = ({ forumUrl }) => {
   const [newThread, setNewThread] = useState({});
   const [newComment, setNewComment] = useState({});
 
-  const fetchForumDetails = async () => {
-    let forum = await fetch(`/api/v1/forums?url=${forumUrl}`);
-    forum = await forum.json();
-    setNewThread({ ...newThread, forumId: forum[0].id });
-  };
-
   const publishThread = async (e) => {
     e.preventDefault();
-    console.log(newComment);
     let thread = await fetch(`/api/v1/threads`, {
       method: "POST",
-      body: JSON.stringify(newThread),
+      body: JSON.stringify({ ...newThread, forumId: forum.id }),
       headers: { "Content-type": "application/json;charset=utf-8" },
     });
     console.log(thread.status);
@@ -45,14 +38,10 @@ const NewThread = ({ forumUrl }) => {
         }),
         headers: { "Content-type": "application/json;charset=utf-8" },
       }).then(
-        history.push(`/forum/${forumUrl}/thread/${thread.lastInsertRowid}`)
+        history.push(`/forum/${forum.url}/thread/${thread.lastInsertRowid}`)
       );
     }
   };
-
-  useEffect(() => {
-    fetchForumDetails();
-  }, []);
 
   return (
     <div>
