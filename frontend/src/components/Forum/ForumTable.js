@@ -31,11 +31,9 @@ const ForumTable = ({ nameSearch, categorySearch }) => {
         })}
 
       {!forums && (
-        <div className="col-12 pt-5 oblique">
-          <h2 className="secondary-tc">
-            Vi kunde tyvärr inte hitta ett forum som matchade din sökning
-          </h2>
-        </div>
+        <h2 className="col-12 pt-5 oblique secondary-tc no-result-text d-flex justify-content-center">
+          Vi kunde tyvärr inte hitta ett forum som matchade din sökning
+        </h2>
       )}
     </div>
   );

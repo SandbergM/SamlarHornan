@@ -9,6 +9,7 @@ const Thread = require("../models/Thread");
 */
 const createThread = (req, res) => {
   const { title, forumId } = req.body;
+
   let requestIncomplete = requiredFields({ title, forumId });
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);

@@ -24,6 +24,10 @@ const UserContextProvider = (props) => {
     whoami();
   }, []);
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   const values = {
     user,
     setUser,

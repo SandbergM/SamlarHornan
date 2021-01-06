@@ -8,7 +8,7 @@ const forumSearch = (params) => {
       TABLE: "forums",
       LIKE: { name, description, url },
       EQUAL: { categoryId },
-      LIMIT: 100,
+      LIMIT: 25,
       PAGE: { page },
       SORT: { sortBy, orderBy },
     }).run() || [];

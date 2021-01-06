@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../../context/UserContext";
-import { Button, ModalBody, Form, FormGroup, Label, Input } from "reactstrap";
+import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 
-const LoginModal = (props) => {
+const LoginModal = ({ toggleModalState }) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [showError, setShowError] = useState(false);
@@ -30,7 +30,7 @@ const LoginModal = (props) => {
   return (
     <div className="primary-bgc secondary-tc">
       <Form onSubmit={login}>
-        <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12 m-0">
+        <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12">
           <Label
             for="emailAddress"
             className="tradeHub-dark-grey font-weight-bold"
@@ -46,7 +46,7 @@ const LoginModal = (props) => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </FormGroup>
-        <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12 m-0">
+        <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12">
           <Label
             for="emailAddress"
             className="tradeHub-dark-grey font-weight-bold"
@@ -64,13 +64,21 @@ const LoginModal = (props) => {
         </FormGroup>
         <div
           id="login-error-message"
-          className="col-12 d-flex justify-content-center align-items-center"
+          className="col-12 d-flex justify-content-center align-items-center mt-2"
         >
           {showError && (
             <h6 className="no-margin"> Fel email eller lösenord </h6>
           )}
         </div>
         <Button className="col-6 offset-3 mt-3">Logga in</Button>
+        <p
+          className="secondary-tc no-margin mt-5 d-flex justify-content-center pointer"
+          onClick={() => {
+            toggleModalState();
+          }}
+        >
+          Inget konto? Skaffa ett här!
+        </p>
       </Form>
     </div>
   );

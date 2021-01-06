@@ -9,7 +9,7 @@
 
 .App {
   min-height: 100vh !important;
-  overflow-y: hidden;
+  overflow-y: hidden !important;
 }
 
 .rounded {
@@ -34,6 +34,14 @@
 .no-border {
   border: none !important;
 }
+
+.no-padding {
+  padding: 0 !important;
+}
 .transparent {
   background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.no-result-text {
+  font-size: 20px;
 }

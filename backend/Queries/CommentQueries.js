@@ -7,7 +7,7 @@ const commentSearch = (params) => {
     TABLE: "comments",
     LIKE: { message },
     EQUAL: { threadId, userId },
-    LIMIT: 100,
+    LIMIT: 25,
     PAGE: { page },
     SORT: { sortBy, orderBy },
   }).run();

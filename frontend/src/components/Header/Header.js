@@ -24,12 +24,12 @@ const Header = (props) => {
   };
 
   return (
-    <div>
+    <div className="">
       <Navbar
         id="navbar-container"
         light
         expand="md"
-        className="primary-bgc secondary-tc navbar-dark pl-5 pr-5 pt-3 pb-3"
+        className=" primary-bgc secondary-tc navbar-dark pl-5 pr-5 pt-3 pb-3"
       >
         <NavbarBrand
           className="pointer"

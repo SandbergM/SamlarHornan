@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { UserContext } from "../../context/UserContext";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 
-const RegisterModal = (props) => {
+const RegisterModal = ({ toggleModalState }) => {
   const [newUser, setNewUser] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -34,7 +34,7 @@ const RegisterModal = (props) => {
   return (
     <div className="primary-bgc secondary-tc">
       <Form className="row" onSubmit={register}>
-        <FormGroup className="col-12 m-0">
+        <FormGroup className="col-12 ">
           <Label className="tradeHub-dark-grey font-weight-bold">Email</Label>
           <Input
             required
@@ -44,7 +44,7 @@ const RegisterModal = (props) => {
             onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
           />
         </FormGroup>
-        <FormGroup className="col-12 m-0">
+        <FormGroup className="col-12">
           <Label className="tradeHub-dark-grey font-weight-bold">
             Password
           </Label>
@@ -58,7 +58,7 @@ const RegisterModal = (props) => {
             }
           />
         </FormGroup>
-        <FormGroup className="col-12 m-0">
+        <FormGroup className="col-12">
           <Label className="tradeHub-dark-grey font-weight-bold">
             Användarnamn
           </Label>
@@ -72,7 +72,7 @@ const RegisterModal = (props) => {
             }
           />
         </FormGroup>
-        <FormGroup className="col-6 m-0">
+        <FormGroup className="col-6">
           <Label className="tradeHub-dark-grey font-weight-bold">Förnamn</Label>
           <Input
             required
@@ -84,7 +84,7 @@ const RegisterModal = (props) => {
             }
           />
         </FormGroup>
-        <FormGroup className="col-6 m-0">
+        <FormGroup className="col-6 ">
           <Label className="tradeHub-dark-grey font-weight-bold">
             Efternamn
           </Label>
@@ -97,7 +97,7 @@ const RegisterModal = (props) => {
               setNewUser({ ...newUser, lastName: e.target.value })
             }
           />
-        </FormGroup>{" "}
+        </FormGroup>
         <div
           id="login-error-message"
           className="col-12 d-flex justify-content-center align-items-center"
@@ -105,6 +105,14 @@ const RegisterModal = (props) => {
           {errorMessage && <h6 className="no-margin"> {errorMessage} </h6>}
         </div>
         <Button className="col-6 offset-3 mt-3">Registrera</Button>
+        <p
+          className="col-12 secondary-tc no-margin mt-5 d-flex justify-content-center pointer"
+          onClick={() => {
+            toggleModalState();
+          }}
+        >
+          Redan registrerad? Logga in här!
+        </p>
       </Form>
     </div>
   );

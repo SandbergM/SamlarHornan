@@ -17,21 +17,24 @@ import UserContexProvider from "./context/UserContext";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter className="row">
       <div className="App primary-bgc">
         <UserContexProvider>
           <main>
-            <Header />
-            <Switch>
-              <Route exact path="/" component={StartPage} />
-              <Route exact path="/forum/:forumUrl" component={ForumPage} />
-              <Route
-                exact
-                path="/forum/:forumUrl/thread/:threadId"
-                component={ThreadPage}
-              />
-              <Route exact path="*" component={PageNotFound} />
-            </Switch>
+            <Header className="col-12" />
+            {/* Saving space on desktop for potential list potential favourite forums etc */}
+            <div className="col-12 col-lg-6 offset-lg-3 mt-5">
+              <Switch>
+                <Route exact path="/" component={StartPage} />
+                <Route exact path="/forum/:forumUrl" component={ForumPage} />
+                <Route
+                  exact
+                  path="/forum/:forumUrl/thread/:threadId"
+                  component={ThreadPage}
+                />
+                <Route exact path="*" component={PageNotFound} />
+              </Switch>
+            </div>
           </main>
         </UserContexProvider>
       </div>

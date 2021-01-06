@@ -20,24 +20,20 @@ const StartPage = () => {
   }, []);
 
   return (
-    <div className="d-flex justify-content-around">
-      <div className="col-12 col-lg-8 col-xl-6 pt-5">
-        <div className="row ">
-          <div className="col-8">
-            <SearchField
-              onChange={setNameSearch}
-              placeholder={`Sök efter forum`}
-            />
-          </div>
-          <div className="col-4">
-            <Select
-              className="col-8"
-              onChange={setCategorySearch}
-              options={options}
-            />
-          </div>
+    <div className="col-12 pt-3">
+      <div className="row">
+        <div className="col-12 col-lg-8 mb-2">
+          <SearchField
+            onChange={setNameSearch}
+            placeholder={`Sök efter forum`}
+          />
         </div>
-        <ForumTable categorySearch={categorySearch} nameSearch={nameSearch} />
+        <div className="col-12 col-lg-4 mb-2">
+          <Select onChange={setCategorySearch} options={options} />
+        </div>
+        <div className="col-12 mb-2">
+          <ForumTable categorySearch={categorySearch} nameSearch={nameSearch} />
+        </div>
       </div>
     </div>
   );
