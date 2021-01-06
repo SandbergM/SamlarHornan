@@ -3,11 +3,10 @@ import React, { createContext, useEffect, useState } from "react";
 export const UserContext = createContext();
 
 const UserContextProvider = (props) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(false);
 
   const whoami = async () => {
     let result = await fetch(`/api/v1/auth`);
-    console.log(result);
     if (result.status === 200) {
       setUser(await result.json());
     } else {
@@ -15,9 +14,11 @@ const UserContextProvider = (props) => {
     }
   };
 
-  const login = async (email, password) => {};
-
-  const logout = async (email, password) => {};
+  const logout = async () => {
+    await fetch(`/api/v1/auth`, {
+      method: "DELETE",
+    }).then(setUser(null));
+  };
 
   useEffect(() => {
     whoami();
@@ -25,8 +26,8 @@ const UserContextProvider = (props) => {
 
   const values = {
     user,
+    setUser,
     whoami,
-    login,
     logout,
   };
 

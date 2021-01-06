@@ -20,7 +20,7 @@ const StartPage = () => {
   }, []);
 
   return (
-    <div className="row d-flex justify-content-around">
+    <div className="d-flex justify-content-around">
       <div className="col-8 pt-5">
         <div className="row ">
           <div className="col-8">
