@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CommentRow from "./CommentRow";
 
-const CommentTable = ({ comments }) => {
+const CommentTable = ({ comments, deleteComment }) => {
   return (
-    <div className="col-12">
+    <div className="row">
       {comments &&
         comments.map((comment, index) => {
+          console.log(comment);
           return (
-            <h2>
-              <CommentRow key={index} comment={comment} />
-            </h2>
+            <CommentRow
+              key={index}
+              comment={comment}
+              deleteComment={deleteComment}
+            />
           );
         })}
     </div>

@@ -9,7 +9,6 @@ const Comment = require("../models/Comment");
 */
 const createComment = (req, res) => {
   const { message, highlighted, threadId } = req.body;
-  console.log(req.body);
   let requestIncomplete = requiredFields({ message, highlighted, threadId });
   if (requestIncomplete) {
     console.log(requestIncomplete);

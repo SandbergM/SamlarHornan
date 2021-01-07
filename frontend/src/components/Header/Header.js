@@ -14,7 +14,7 @@ import AuthenticationModal from "../Authentication/AuthenticationModal";
 
 const Header = (props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout, login } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   const toggle = () => setIsOpen(!isOpen);
 
   let history = useHistory();

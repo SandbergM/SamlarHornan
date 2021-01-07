@@ -18,26 +18,31 @@ const registerAccount = (req, res) => {
   if (weakPassword) {
     res.statusMessage = weakPassword;
     res.status(400).end();
+    return;
   }
 
   if (requestIncomplete) {
     res.statusMessage = `Missing : ${requestIncomplete}`;
     res.status(400).end();
+    return;
   }
 
   if (!validEmail(email)) {
     res.statusMessage = `Invalid Email`;
     res.status(400).end();
+    return;
   }
 
   if (findBy("users", { email })) {
     res.statusMessage = `Email already registered`;
     res.status(409).end();
+    return;
   }
 
   if (findBy("users", { username })) {
     res.statusMessage = `Username already registered`;
     res.status(409).end();
+    return;
   }
 
   let user = saveToDb("users", new User({ ...req.body }));

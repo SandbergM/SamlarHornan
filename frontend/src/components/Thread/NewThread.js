@@ -10,12 +10,11 @@ import {
 } from "reactstrap";
 import { useHistory } from "react-router-dom";
 
-const NewThread = ({ forum }) => {
+const NewThread = ({ forumUrl }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
 
   let history = useHistory();
-
   const [newThread, setNewThread] = useState({});
   const [newComment, setNewComment] = useState({});
 
@@ -23,10 +22,9 @@ const NewThread = ({ forum }) => {
     e.preventDefault();
     let thread = await fetch(`/api/v1/threads`, {
       method: "POST",
-      body: JSON.stringify({ ...newThread, forumId: forum.id }),
+      body: JSON.stringify({ ...newThread, forumUrl: forumUrl }),
       headers: { "Content-type": "application/json;charset=utf-8" },
     });
-    console.log(thread.status);
     if (thread.status === 201) {
       thread = await thread.json();
       await fetch(`/api/v1/comments`, {
@@ -38,7 +36,7 @@ const NewThread = ({ forum }) => {
         }),
         headers: { "Content-type": "application/json;charset=utf-8" },
       }).then(
-        history.push(`/forum/${forum.url}/thread/${thread.lastInsertRowid}`)
+        history.push(`/forum/${forumUrl}/thread/${thread.lastInsertRowid}`)
       );
     }
   };
@@ -52,7 +50,7 @@ const NewThread = ({ forum }) => {
         Skapa ny tråd
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalBody>
+        <ModalBody className="primary-bgc secondary-tc">
           <Form onSubmit={publishThread}>
             <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12">
               <Label
@@ -72,23 +70,20 @@ const NewThread = ({ forum }) => {
               />
             </FormGroup>
             <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12">
-              <Label
-                for="emailAddress"
-                className="tradeHub-dark-grey font-weight-bold"
-              >
-                Titel
+              <Label className="tradeHub-dark-grey font-weight-bold">
+                Meddelande
               </Label>
               <Input
                 required
                 className="light-grey-background tradeHub-input"
-                type="text"
-                placeholder="Titel"
+                type="textarea"
+                placeholder="Meddelande"
                 onChange={(e) =>
                   setNewComment({ ...newComment, message: e.target.value })
                 }
               />
             </FormGroup>
-            <Button>Publicera</Button>
+            <Button className="col-6 offset-3 mt-3">Publicera</Button>
           </Form>
         </ModalBody>
       </Modal>

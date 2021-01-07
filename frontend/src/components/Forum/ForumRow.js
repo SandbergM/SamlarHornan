@@ -7,6 +7,7 @@ const ForumRow = ({ forum }) => {
   const redirectToForum = (url) => {
     history.push(`/forum/${url}`);
   };
+
   return (
     <div
       className="row forum-row-container secondary-bgc rounded mt-2 primary-tc pointer pl-2"

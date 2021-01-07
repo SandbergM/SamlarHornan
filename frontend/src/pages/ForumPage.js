@@ -3,24 +3,34 @@ import { useParams } from "react-router-dom";
 import ThreadTable from "../components/Thread/ThreadTable";
 import SearchField from "../components/InputFields/SearchField";
 import NewThread from "../components/Thread/NewThread";
+import { MdDelete } from "react-icons/md";
 import { UserContext } from "../context/UserContext";
 
 const StartPage = () => {
   const [threadTitle, setThreadTitle] = useState("");
-  const [forum, setForum] = useState(null);
+  const [threads, setThreads] = useState("");
 
-  const { user } = useContext(UserContext);
+  const { isAdmin, permissions, user } = useContext(UserContext);
   let { forumUrl } = useParams();
 
-  const fetchForumDetails = async () => {
-    let forum = await fetch(`/api/v1/forums?url=${forumUrl}`);
-    forum = await forum.json();
-    setForum(forum[0]);
+  const fetchThreads = async (title) => {
+    let threads = await fetch(
+      `/api/v1/threads?forumUrl=${forumUrl}&title=${title}`
+    );
+    switch (threads.status) {
+      case 200:
+        setThreads(await threads.json());
+        break;
+      default:
+        setThreads(null);
+    }
   };
 
+  const deleteThread = async (id) => {};
+
   useEffect(() => {
-    fetchForumDetails();
-  }, [forumUrl]);
+    fetchThreads(threadTitle);
+  }, [threadTitle]);
 
   return (
     <div className="col-12 pt-3">
@@ -33,11 +43,11 @@ const StartPage = () => {
         </div>
         {user && (
           <div className="col-12 col-lg-4 mb-2">
-            <NewThread forum={forum} />
+            <NewThread forumUrl={forumUrl} />
           </div>
         )}
         <div className="col-12 mb-2">
-          <ThreadTable forumUrl={forumUrl} threadTitle={threadTitle} />
+          <ThreadTable threads={threads} deleteThread={deleteThread} />
         </div>
       </div>
     </div>

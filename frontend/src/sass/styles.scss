@@ -15,8 +15,13 @@
 .rounded {
   border-radius: 10px;
 }
+
 .pointer {
   cursor: pointer !important;
+}
+
+.no-pointer {
+  cursor: none !important;
 }
 .no-margin {
   margin: 0 !important;
@@ -44,4 +49,23 @@
 
 .no-result-text {
   font-size: 20px;
+}
+
+.comment-message-container {
+  word-wrap: break-word;
+}
+.moderator-icon {
+  font-size: 30px;
+}
+
+.rounder-upper-left {
+  border-radius: 10px 0 0 0;
+}
+
+.rounder-upper-right {
+  border-radius: 0 10px 0 0;
+}
+
+.rounded-upper {
+  border-radius: 10px 10px 0 0;
 }

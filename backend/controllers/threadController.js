@@ -8,14 +8,14 @@ const Thread = require("../models/Thread");
 # CREATE
 */
 const createThread = (req, res) => {
-  const { title, forumId } = req.body;
+  const { title, forumUrl } = req.body;
+  let requestIncomplete = requiredFields({ title, forumUrl });
 
-  let requestIncomplete = requiredFields({ title, forumId });
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
-
-  if (!findBy("forums", { id: forumId })) {
+  req.body.forumId = findBy("forums", { url: forumUrl }).id || -1;
+  if (!findBy("forums", { id: req.body.forumId })) {
     return res.status(400).send(`A forum with that id was not found`);
   }
 
@@ -36,7 +36,14 @@ const createThread = (req, res) => {
 */
 const threadParamSearch = (req, res) => {
   let { forumUrl } = req.query;
-  req.query.forumId = findBy("forums", { url: forumUrl }).id;
+  let requestIncomplete = requiredFields({ forumUrl });
+
+  if (requestIncomplete) {
+    return res.status(400).send(`Missing : ${requestIncomplete}`);
+  }
+
+  req.query.forumId = findBy("forums", { url: forumUrl }).id || -1;
+
   let threads = threadSearch(req.query);
   let found = threads.length;
   res.status(found ? 200 : 400).send(found ? threads : `Not found`);

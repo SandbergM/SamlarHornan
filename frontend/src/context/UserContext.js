@@ -3,7 +3,9 @@ import React, { createContext, useEffect, useState } from "react";
 export const UserContext = createContext();
 
 const UserContextProvider = (props) => {
-  const [user, setUser] = useState(false);
+  const [user, setUser] = useState(null);
+  const [permissions, setPermissions] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const whoami = async () => {
     let result = await fetch(`/api/v1/auth`);
@@ -17,7 +19,8 @@ const UserContextProvider = (props) => {
   const logout = async () => {
     await fetch(`/api/v1/auth`, {
       method: "DELETE",
-    }).then(setUser(null));
+    });
+    setUser(null);
   };
 
   useEffect(() => {
@@ -25,7 +28,8 @@ const UserContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log(user);
+    setPermissions({ ...((user && user.permissions) || {}) });
+    setIsAdmin(user && user.roles && user.roles.includes("ADMIN"));
   }, [user]);
 
   const values = {
@@ -33,6 +37,8 @@ const UserContextProvider = (props) => {
     setUser,
     whoami,
     logout,
+    permissions,
+    isAdmin,
   };
 
   return (
