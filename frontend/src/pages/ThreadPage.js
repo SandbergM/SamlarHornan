@@ -48,9 +48,12 @@ const ThreadPage = () => {
     setComments(updatedArr);
   };
 
+  const appendComment = (comment) => {
+    setComments([...comments, { ...comment, sender: user }]);
+  };
+
   const lockThread = async () => {
     let locked = thread.isLocked === 0 ? 1 : 0;
-    console.log(locked);
     let res = await fetch(`/api/v1/threads/${threadId}`, {
       method: "PUT",
       body: JSON.stringify({ isLocked: locked }),
@@ -100,7 +103,7 @@ const ThreadPage = () => {
                 )}
               </div>
             )}
-            <div className="col-12 primary-tc secondary-bgc bold oblique p-2 pl-5 ">
+            <div className="col-12 primary-tc secondary-bgc bold p-2 pl-5 ">
               <div className="row">
                 <h5 className="col-8">{convertTimeStamp(thread.published)}</h5>
                 {user && !thread.isLocked && (
@@ -108,6 +111,7 @@ const ThreadPage = () => {
                     <NewComment
                       threadId={threadId}
                       isModerator={isAdmin || permissions[forumUrl]}
+                      appendComment={appendComment}
                     />
                   </div>
                 )}

@@ -1,6 +1,6 @@
 const { threadSearch, removeThread } = require("../Queries/ThreadQueries");
 const { findBy, saveToDb, updateDb } = require("../Queries/SharedQueries");
-const { requiredFields, validateDataTypes } = require("../Helpers/Validation");
+const { requiredFields, requiredDataTypes } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const Thread = require("../models/Thread");
 
@@ -14,14 +14,19 @@ const createThread = (req, res) => {
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
+
+  req.body.published = timestampCurrentTime();
+  let thread = new Thread({ ...req.body });
+
+  let badInput = validateDataInput(thread);
+  if (badInput) {
+    return res.status(400).send(badInput);
+  }
+
   req.body.forumId = findBy("forums", { url: forumUrl }).id || -1;
   if (!findBy("forums", { id: req.body.forumId })) {
     return res.status(400).send(`A forum with that id was not found`);
   }
-
-  req.body.published = timestampCurrentTime();
-  req.body.isLocked = 0;
-  let thread = new Thread({ ...req.body });
 
   let savedThread = saveToDb("threads", thread);
   if (!savedThread) {
@@ -53,33 +58,24 @@ const threadParamSearch = (req, res) => {
 # UPDATE
 */
 const updateThread = (req, res) => {
-  const { id } = req.params;
-  let { user } = req.session;
+  let thread = findBy("threads", { id: req.params.id });
 
-  let incorrentDataType = validateDataTypes({
-    NUMBER: { id },
-  });
-
-  if (incorrentDataType) {
-    return res.status(200).send(incorrentDataType);
-  }
-
-  let thread = findBy("threads", { id: id });
-  let forum = findBy("forums", { id: thread.forumId });
-
-  let isAdmin = user.roles.includes("ADMIN");
-  let hasPermission = user.permissions[forum.url];
-
-  if (!isAdmin && !hasPermission) {
+  if (!hasPermission(req.session.user, thread)) {
     return res.status(401).send(`Unauthorized`);
   }
+
+  let badRequest = validateDataInput({ ...req.body });
+  if (badRequest) {
+    return res.status(400).send(badRequest);
+  }
+
   if (!thread) {
     return res.status(404).send(`Not found`);
   }
 
   let update = updateDb(
     "threads",
-    id,
+    thread.id,
     new Thread({ ...req.body, forumId: undefined })
   );
 
@@ -111,10 +107,20 @@ const deleteThread = (req, res) => {
   res.status(deleted ? 200 : 400).send(deleted);
 };
 
+// Used to compare the data from the user is the correct type
+const validateDataInput = ({ title, forumId, isLocked, published }) => {
+  console.log("test");
+  return requiredDataTypes({
+    string: { title, forumId },
+    number: { published },
+    boolean: { isLocked },
+  });
+};
+// Checks if the current user is admin or moderator in the forum
 const hasPermission = (user, thread) => {
   let forum = findBy("forums", { id: thread.forumId });
   let isAdmin = user.roles.includes("ADMIN");
-  let isSubModerator = user.permissions[forum.url];
+  let isSubModerator = forum && user.permissions[forum.url];
   return isAdmin || isSubModerator;
 };
 

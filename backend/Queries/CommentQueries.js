@@ -14,7 +14,7 @@ const commentSearch = (params) => {
     }).run() || [];
 
   comments.forEach((comment) => {
-    comment.sender = appendSenderToComment(userId);
+    comment.sender = appendSenderToComment(comment.userId);
   });
 
   return comments;
@@ -24,8 +24,8 @@ const appendSenderToComment = (id) => {
   return new SearchQuery({
     TABLE: "users",
     SELECT: "username, firstName, lastName",
-    EQUAL: { id },
-  }).run();
+    EQUAL: { id: id },
+  }).run()[0];
 };
 
 const removeComment = (id) => {

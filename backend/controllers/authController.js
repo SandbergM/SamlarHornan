@@ -1,5 +1,5 @@
 const { userAuthentication } = require("../queries/AuthQueries");
-const { requiredFields } = require("../Helpers/Validation");
+const { requiredFields, requiredDataTypes } = require("../Helpers/Validation");
 
 const signIn = (req, res) => {
   const { email, password } = req.body;
@@ -7,6 +7,14 @@ const signIn = (req, res) => {
   let requestIncomplete = requiredFields({ email, password });
   if (requestIncomplete) {
     return res.status(403).send(`Missing : ${requestIncomplete}`);
+  }
+
+  let badRequest = requiredDataTypes({
+    string: { email, password },
+  });
+
+  if (badRequest) {
+    return res.status(400).send(badRequest);
   }
 
   let user = userAuthentication(req.body);

@@ -1,5 +1,5 @@
 const { commentSearch, removeComment } = require("../Queries/CommentQueries");
-const { requiredFields } = require("../Helpers/Validation");
+const { requiredFields, requiredDataTypes } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const { findBy, saveToDb } = require("../Queries/SharedQueries");
 const Comment = require("../models/Comment");
@@ -9,14 +9,29 @@ const Comment = require("../models/Comment");
 */
 const createComment = (req, res) => {
   const { message, highlighted, threadId } = req.body;
+
   let requestIncomplete = requiredFields({ message, highlighted, threadId });
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
+  let badRequest = requiredDataTypes({
+    string: { message },
+    number: { threadId },
+    boolean: { highlighted },
+  });
+
+  if (badRequest) {
+    return res.status(400).send(badRequest);
+  }
+
   let thread = findBy("threads", { id: threadId });
   if (!thread || thread.isLocked === 1) {
     return res.status(400).send(`Could not post to thread`);
+  }
+
+  if (!hasPermission(req.session.user, thread.id)) {
+    req.body.highlighted = false;
   }
 
   let comment = new Comment({
@@ -56,7 +71,7 @@ const deleteComment = (req, res) => {
   const { user } = req.session;
   let comment = findBy("comments", { id: id });
 
-  if (!hasPermission(user, comment)) {
+  if (!hasPermission(user, comment.threadId)) {
     return res.status(401).send(`Unauthorized`);
   }
 
@@ -69,8 +84,8 @@ const deleteComment = (req, res) => {
   res.status(deleted ? 200 : 400).send(deleted);
 };
 
-const hasPermission = (user, comment) => {
-  let thread = findBy("threads", { id: comment.threadId });
+const hasPermission = (user, threadId) => {
+  let thread = findBy("threads", { id: threadId });
   let forum = findBy("forums", { id: thread.forumId });
   let isAdmin = user.roles.includes("ADMIN");
   let isSubModerator = user.permissions[forum.url];

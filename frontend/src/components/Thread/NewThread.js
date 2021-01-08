@@ -32,7 +32,7 @@ const NewThread = ({ forumUrl }) => {
         body: JSON.stringify({
           ...newComment,
           threadId: thread.lastInsertRowid,
-          highlighted: 1,
+          highlighted: 0,
         }),
         headers: { "Content-type": "application/json;charset=utf-8" },
       }).then(

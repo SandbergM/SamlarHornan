@@ -9,7 +9,7 @@ import {
   Input,
 } from "reactstrap";
 
-const NewComment = ({ threadId, isModerator }) => {
+const NewComment = ({ threadId, isModerator, appendComment }) => {
   const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
 
@@ -22,17 +22,16 @@ const NewComment = ({ threadId, isModerator }) => {
       method: "POST",
       body: JSON.stringify({
         message: message,
-        highlighted: highlighted ? 1 : 0,
+        highlighted: highlighted,
         threadId: threadId,
       }),
       headers: { "Content-type": "application/json;charset=utf-8" },
     });
-    console.log(comment.status);
+    if (comment.status === 201) {
+      appendComment(await comment.json());
+      setModal(!modal);
+    }
   };
-
-  useEffect(() => {
-    console.log(highlighted);
-  }, [highlighted]);
 
   return (
     <div>
@@ -57,19 +56,21 @@ const NewComment = ({ threadId, isModerator }) => {
                 onChange={(e) => setMessage(e.target.value)}
               />
             </FormGroup>
-            <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12">
-              <Label for="exampleSelect">Select</Label>
-              <Input
-                type="select"
-                name="select"
-                onChange={(e) => {
-                  setHighlighted(e.target.value);
-                }}
-              >
-                <option value="false">Spara som vanligt inlägg</option>
-                <option value="true">Spara som moderator inlägg</option>
-              </Input>
-            </FormGroup>
+            {isModerator && (
+              <FormGroup className="col-xs-8 col-sm-12 col-md-12 col-lg-12">
+                <Label for="exampleSelect">Select</Label>
+                <Input
+                  type="select"
+                  name="select"
+                  onChange={(e) => {
+                    setHighlighted(e.target.value);
+                  }}
+                >
+                  <option value={false}>Spara som vanligt inlägg</option>
+                  <option value={true}>Spara som moderator inlägg</option>
+                </Input>
+              </FormGroup>
+            )}
             <Button className="col-6 offset-3 mt-3">Publicera</Button>
           </Form>
         </ModalBody>

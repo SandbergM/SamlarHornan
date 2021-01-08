@@ -10,14 +10,21 @@ const CommentRow = ({ comment, deleteComment }) => {
   return (
     <div
       className={`col-12 secondary-bgc rounded mt-2 primary-tc p-2 pl-5 ${
-        comment.highlighted === 1 ? "highlighted-comment" : ""
+        comment.highlighted ? "highlighted-comment" : ""
       }`}
     >
       <div className="row">
-        <div className="col-3">
-          <p> {convertTimeStamp(comment.published)} </p>
+        <div className="col-12 col-lg-4">
+          <div className="row">
+            <p className="col-12 bold">
+              {convertTimeStamp(comment.published)}{" "}
+            </p>
+            <p className="col-12 bold oblique"> {comment.sender.username} </p>
+          </div>
         </div>
-        <div className="col-8 comment-message-container">{comment.message}</div>
+        <div className="col-12 col-lg-7 comment-message-container">
+          {comment.message}
+        </div>
         {(isAdmin || permissions[forumUrl]) && (
           <div className="col-1 d-flex align-items-center">
             <MdDelete

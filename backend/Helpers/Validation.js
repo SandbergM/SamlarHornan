@@ -1,3 +1,6 @@
+/*
+Checks if any field is undefined and sends back an response if a value is missing
+*/
 const requiredFields = (fields) => {
   for (let [key, val] of Object.entries(fields)) {
     if (val === undefined) {
@@ -6,28 +9,33 @@ const requiredFields = (fields) => {
   }
 };
 
-const isNumber = (fields) => {
-  for (let [key, val] of Object.entries(fields)) {
-    if (isNaN(val)) {
-      return key;
+/*
+Checks if the datatype is correct
+*/
+const requiredDataTypes = (data) => {
+  for (let [dataType, fields] of Object.entries(data)) {
+    console.log(fields);
+    if (fields) {
+      for (let [key, val] of Object.entries(fields)) {
+        if (val && typeof val !== dataType) {
+          return `${key} requires type ${dataType.toUpperCase()}`;
+        }
+      }
     }
   }
 };
 
-const sqliteBoolean = (bool) => {
-  switch (bool.toLowerCase()) {
-    case "true":
-      return 0;
-    case "false":
-      return 1;
-  }
-};
-
+/*
+Pattern used to check if an email is valid or not
+*/
 const validEmail = (email) => {
   let validEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return email.match(validEmailPattern);
 };
 
+/*
+Rules / Requirements for a valid password
+*/
 const validPassword = (password) => {
   let start = `Password needs to contain at least`;
   if (!password.match(/[a-z]+/)) return `${start} one lowercase letter`;
@@ -38,37 +46,9 @@ const validPassword = (password) => {
   return false;
 };
 
-const validateDataTypes = ({ NUMBER, STRING, BOOLEAN }) => {
-  if (NUMBER) {
-    for (let [key, val] of Object.entries(NUMBER)) {
-      if (!Number(val)) {
-        return `${key} needs to be of type Number`;
-      }
-    }
-  }
-
-  if (STRING) {
-    for (let [key, val] of Object.entries(STRING)) {
-      if (typeof val !== "string") {
-        return `${key} needs to be of type String`;
-      }
-    }
-  }
-
-  if (BOOLEAN) {
-    for (let [key, val] of Object.entries(BOOLEAN)) {
-      if (typeof val !== "Boolean") {
-        return `${key} needs to be of type Boolean`;
-      }
-    }
-  }
-};
-
 module.exports = {
   requiredFields,
-  sqliteBoolean,
+  requiredDataTypes,
   validEmail,
-  isNumber,
   validPassword,
-  validateDataTypes,
 };
