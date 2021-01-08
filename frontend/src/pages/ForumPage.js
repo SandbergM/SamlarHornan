@@ -3,14 +3,13 @@ import { useParams } from "react-router-dom";
 import ThreadTable from "../components/Thread/ThreadTable";
 import SearchField from "../components/InputFields/SearchField";
 import NewThread from "../components/Thread/NewThread";
-import { MdDelete } from "react-icons/md";
 import { UserContext } from "../context/UserContext";
 
 const StartPage = () => {
   const [threadTitle, setThreadTitle] = useState("");
   const [threads, setThreads] = useState("");
 
-  const { isAdmin, permissions, user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   let { forumUrl } = useParams();
 
   const fetchThreads = async (title) => {
@@ -26,7 +25,17 @@ const StartPage = () => {
     }
   };
 
-  const deleteThread = async (id) => {};
+  const deleteThread = async (id) => {
+    let deleteThread = await fetch(`/api/v1/threads/${id}`, {
+      method: "DELETE",
+    });
+    if (deleteThread.status === 200) {
+      let tempArr = threads.filter((thread) => {
+        if (thread.id !== id) return thread;
+      });
+      setThreads(tempArr);
+    }
+  };
 
   useEffect(() => {
     fetchThreads(threadTitle);

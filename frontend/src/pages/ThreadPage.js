@@ -4,6 +4,7 @@ import CommentTable from "../components/Comment/CommentTable";
 import { convertTimeStamp } from "../utils/TimeStampToDateAndTime";
 import { MdLockOpen, MdLockOutline } from "react-icons/md";
 import { UserContext } from "../context/UserContext";
+import NewComment from "../components/Comment/NewComment";
 
 const ThreadPage = () => {
   const [thread, setThread] = useState(null);
@@ -71,13 +72,14 @@ const ThreadPage = () => {
         <div className="col-12">
           <div className="row">
             <div
-              className={`primary-tc secondary-bgc bold oblique p-2 pl-5 ${
+              className={`primary-tc secondary-bgc bold oblique p-2 pl-5 d-flex ${
                 isAdmin || permissions[forumUrl]
                   ? "col-10 rounder-upper-left"
                   : "col-12 rounded-upper"
               }`}
             >
-              {thread && <h2>{thread.title}</h2>}
+              {thread && <h5>{thread.title}</h5>}
+              {thread.isLocked ? <h5 className="ml-5">*Låst*</h5> : ""}
             </div>
             {(isAdmin || permissions[forumUrl]) && (
               <div className="col-2 primary-tc secondary-bgc bold oblique rounder-upper-right d-flex justify-content-center align-items-center">
@@ -99,7 +101,17 @@ const ThreadPage = () => {
               </div>
             )}
             <div className="col-12 primary-tc secondary-bgc bold oblique p-2 pl-5 ">
-              <h5>{convertTimeStamp(thread.published)}</h5>
+              <div className="row">
+                <h5 className="col-8">{convertTimeStamp(thread.published)}</h5>
+                {user && !thread.isLocked && (
+                  <div className="col-4">
+                    <NewComment
+                      threadId={threadId}
+                      isModerator={isAdmin || permissions[forumUrl]}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             <div className="col-12">
               <CommentTable deleteComment={deleteComment} comments={comments} />

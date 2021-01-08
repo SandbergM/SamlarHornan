@@ -1,6 +1,6 @@
 const requiredFields = (fields) => {
   for (let [key, val] of Object.entries(fields)) {
-    if (!val) {
+    if (val === undefined) {
       return key;
     }
   }
@@ -38,10 +38,37 @@ const validPassword = (password) => {
   return false;
 };
 
+const validateDataTypes = ({ NUMBER, STRING, BOOLEAN }) => {
+  if (NUMBER) {
+    for (let [key, val] of Object.entries(NUMBER)) {
+      if (!Number(val)) {
+        return `${key} needs to be of type Number`;
+      }
+    }
+  }
+
+  if (STRING) {
+    for (let [key, val] of Object.entries(STRING)) {
+      if (typeof val !== "string") {
+        return `${key} needs to be of type String`;
+      }
+    }
+  }
+
+  if (BOOLEAN) {
+    for (let [key, val] of Object.entries(BOOLEAN)) {
+      if (typeof val !== "Boolean") {
+        return `${key} needs to be of type Boolean`;
+      }
+    }
+  }
+};
+
 module.exports = {
   requiredFields,
   sqliteBoolean,
   validEmail,
   isNumber,
   validPassword,
+  validateDataTypes,
 };

@@ -6,7 +6,6 @@ const CommentTable = ({ comments, deleteComment }) => {
     <div className="row">
       {comments &&
         comments.map((comment, index) => {
-          console.log(comment);
           return (
             <CommentRow
               key={index}

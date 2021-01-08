@@ -5,10 +5,10 @@ const ForumTable = ({ forums }) => {
   return (
     <div className="col-12">
       {forums &&
-        forums.map((forum) => {
+        forums.map((forum, index) => {
           return (
             <h2>
-              <ForumRow key={forum.url} forum={forum} />
+              <ForumRow key={index} forum={forum} />
             </h2>
           );
         })}

@@ -1,6 +1,6 @@
-const { threadSearch } = require("../Queries/ThreadQueries");
+const { threadSearch, removeThread } = require("../Queries/ThreadQueries");
 const { findBy, saveToDb, updateDb } = require("../Queries/SharedQueries");
-const { requiredFields } = require("../Helpers/Validation");
+const { requiredFields, validateDataTypes } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const Thread = require("../models/Thread");
 
@@ -56,6 +56,14 @@ const updateThread = (req, res) => {
   const { id } = req.params;
   let { user } = req.session;
 
+  let incorrentDataType = validateDataTypes({
+    NUMBER: { id },
+  });
+
+  if (incorrentDataType) {
+    return res.status(200).send(incorrentDataType);
+  }
+
   let thread = findBy("threads", { id: id });
   let forum = findBy("forums", { id: thread.forumId });
 
@@ -65,14 +73,15 @@ const updateThread = (req, res) => {
   if (!isAdmin && !hasPermission) {
     return res.status(401).send(`Unauthorized`);
   }
-
   if (!thread) {
     return res.status(404).send(`Not found`);
   }
 
-  let update = updateDb("threads", id, {
-    ...new Thread({ ...req.body, forumId: undefined }),
-  });
+  let update = updateDb(
+    "threads",
+    id,
+    new Thread({ ...req.body, forumId: undefined })
+  );
 
   if (!update) {
     return res.status(400).send(`Couldn't finalize update`);
@@ -84,9 +93,34 @@ const updateThread = (req, res) => {
 /*
 # DELETE
 */
+const deleteThread = (req, res) => {
+  const { id } = req.params;
+  const { user } = req.session;
+  let thread = findBy("threads", { id: id });
+
+  if (!hasPermission(user, thread)) {
+    return res.status(401).send(`Unauthorized`);
+  }
+
+  if (!thread) {
+    return res.status(404).send(`Not found`);
+  }
+
+  let deleted = removeThread(id);
+
+  res.status(deleted ? 200 : 400).send(deleted);
+};
+
+const hasPermission = (user, thread) => {
+  let forum = findBy("forums", { id: thread.forumId });
+  let isAdmin = user.roles.includes("ADMIN");
+  let isSubModerator = user.permissions[forum.url];
+  return isAdmin || isSubModerator;
+};
 
 module.exports = {
   createThread,
   threadParamSearch,
   updateThread,
+  deleteThread,
 };

@@ -1,4 +1,5 @@
 const SearchQuery = require("./QueryBuilders/SearchQuery");
+const DeleteQuery = require("./QueryBuilders/DeleteQuery");
 
 const threadSearch = (params) => {
   const { id, title, forumId, page, sortBy, orderBy } = params;
@@ -28,6 +29,11 @@ const appendNumberOfThreads = (id) => {
   return parseInt(Object.values(comments));
 };
 
+const removeThread = (id) => {
+  return new DeleteQuery({ TABLE: "threads", ENTITY: { id } }).run();
+};
+
 module.exports = {
   threadSearch,
+  removeThread,
 };

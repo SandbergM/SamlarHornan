@@ -7,9 +7,12 @@ import { UserContext } from "../../context/UserContext";
 const CommentRow = ({ comment, deleteComment }) => {
   let { isAdmin, permissions } = useContext(UserContext);
   let { forumUrl } = useParams();
-  console.log(permissions);
   return (
-    <div className="col-12 secondary-bgc rounded mt-2 primary-tc p-2 pl-5">
+    <div
+      className={`col-12 secondary-bgc rounded mt-2 primary-tc p-2 pl-5 ${
+        comment.highlighted === 1 ? "highlighted-comment" : ""
+      }`}
+    >
       <div className="row">
         <div className="col-3">
           <p> {convertTimeStamp(comment.published)} </p>

@@ -5,10 +5,10 @@ const ThreadTable = ({ threads, deleteThread }) => {
   return (
     <div className="col-12">
       {threads &&
-        threads.map((thread) => {
+        threads.map((thread, index) => {
           return (
             <ThreadRow
-              key={thread.title}
+              key={index}
               thread={thread}
               deleteThread={deleteThread}
             />

@@ -1,5 +1,5 @@
 const { commentSearch, removeComment } = require("../Queries/CommentQueries");
-const { requiredFields, isNumber } = require("../Helpers/Validation");
+const { requiredFields } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const { findBy, saveToDb } = require("../Queries/SharedQueries");
 const Comment = require("../models/Comment");
@@ -11,13 +11,11 @@ const createComment = (req, res) => {
   const { message, highlighted, threadId } = req.body;
   let requestIncomplete = requiredFields({ message, highlighted, threadId });
   if (requestIncomplete) {
-    console.log(requestIncomplete);
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
   let thread = findBy("threads", { id: threadId });
   if (!thread || thread.isLocked === 1) {
-    console.log("2");
     return res.status(400).send(`Could not post to thread`);
   }
 
