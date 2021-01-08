@@ -108,11 +108,11 @@ const deleteThread = (req, res) => {
 };
 
 // Used to compare the data from the user is the correct type
-const validateDataInput = ({ title, forumId, isLocked, published }) => {
-  console.log("test");
+const validateDataInput = (params) => {
+  const { id, title, forumId, isLocked, published } = params;
   return requiredDataTypes({
     string: { title, forumId },
-    number: { published },
+    number: { id, published },
     boolean: { isLocked },
   });
 };

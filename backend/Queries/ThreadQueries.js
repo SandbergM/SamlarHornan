@@ -30,7 +30,12 @@ const appendNumberOfThreads = (id) => {
 };
 
 const removeThread = (id) => {
-  return new DeleteQuery({ TABLE: "threads", ENTITY: { id } }).run();
+  let comments = new DeleteQuery({
+    TABLE: "comments",
+    ENTITY: { threadId: id },
+  }).run();
+  let thread = new DeleteQuery({ TABLE: "threads", ENTITY: { id } }).run();
+  return thread && comments;
 };
 
 module.exports = {
