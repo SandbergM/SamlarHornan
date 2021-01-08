@@ -1,5 +1,5 @@
 const { forumSearch, removeForum } = require("../Queries/ForumQueries");
-const { requiredFields } = require("../Helpers/Validation");
+const { requiredFields, requiredDataTypes } = require("../Helpers/Validation");
 const Forum = require("../models/Forum");
 const { findBy, saveToDb } = require("../Queries/SharedQueries");
 
@@ -7,11 +7,22 @@ const { findBy, saveToDb } = require("../Queries/SharedQueries");
 # CREATE
 */
 const createForum = (req, res) => {
-  const { name, description, url } = req.body;
-  let requestIncomplete = requiredFields({ name, description, url });
+  const { name, description, url, categoryId } = req.body;
+  let requestIncomplete = requiredFields({
+    name,
+    description,
+    url,
+    categoryId,
+  });
 
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
+  }
+
+  let badRequest = validateDataInput({ ...req.body });
+
+  if (badRequest) {
+    return res.status(400).send(badRequest);
   }
 
   if (findBy("forums", { name, url })) {
@@ -29,7 +40,7 @@ const createForum = (req, res) => {
 const forumParamSearch = (req, res) => {
   let forums = forumSearch(req.query);
   let found = forums.length;
-  res.status(found ? 200 : 400).send(found ? forums : `Not found`);
+  res.status(found ? 200 : 404).send(found ? forums : `Not found`);
 };
 
 /*
@@ -45,6 +56,16 @@ const deleteForum = (req, res) => {
     return res.status(404).send(`Not found`);
   }
   res.status(200).send({ deletedForum: removeForum(req.params.id) });
+};
+
+// Used to compare the data from the user is the correct type
+const validateDataInput = (params) => {
+  const { id, name, description, url, categoryId } = params;
+  return requiredDataTypes({
+    string: { name, description, url },
+    number: { id },
+    number: { categoryId },
+  });
 };
 
 module.exports = {

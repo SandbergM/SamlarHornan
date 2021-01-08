@@ -27,11 +27,11 @@ const getUserRolesAndPermissions = (id) => {
   let statement = db.prepare(`
       SELECT * FROM roles, usersXroles
       LEFT JOIN forums ON roles.forumId = forums.id
-      WHERE usersXroles.userId = 1 
+      WHERE usersXroles.userId = ${id} 
       AND usersXroles.roleId = roles.id 
       GROUP BY roles.id
     `);
-
+  statement.all({ id: id });
   let result = statement.all({ id: id });
   result.forEach((val) => {
     roles.push(val.type);

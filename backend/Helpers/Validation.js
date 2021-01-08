@@ -1,33 +1,41 @@
+/*
+Checks if any field is undefined and sends back an response if a value is missing
+*/
 const requiredFields = (fields) => {
   for (let [key, val] of Object.entries(fields)) {
-    if (!val) {
+    if (val === undefined) {
       return key;
     }
   }
 };
 
-const isNumber = (fields) => {
-  for (let [key, val] of Object.entries(fields)) {
-    if (isNaN(val)) {
-      return key;
+/*
+Checks if the datatype is correct
+*/
+const requiredDataTypes = (data) => {
+  for (let [dataType, fields] of Object.entries(data)) {
+    console.log(fields);
+    if (fields) {
+      for (let [key, val] of Object.entries(fields)) {
+        if (val && typeof val !== dataType) {
+          return `${key} requires type ${dataType.toUpperCase()}`;
+        }
+      }
     }
   }
 };
 
-const sqliteBoolean = (bool) => {
-  switch (bool.toLowerCase()) {
-    case "true":
-      return 0;
-    case "false":
-      return 1;
-  }
-};
-
+/*
+Pattern used to check if an email is valid or not
+*/
 const validEmail = (email) => {
   let validEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return email.match(validEmailPattern);
 };
 
+/*
+Rules / Requirements for a valid password
+*/
 const validPassword = (password) => {
   let start = `Password needs to contain at least`;
   if (!password.match(/[a-z]+/)) return `${start} one lowercase letter`;
@@ -40,8 +48,7 @@ const validPassword = (password) => {
 
 module.exports = {
   requiredFields,
-  sqliteBoolean,
+  requiredDataTypes,
   validEmail,
-  isNumber,
   validPassword,
 };

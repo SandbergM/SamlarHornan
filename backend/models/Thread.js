@@ -8,6 +8,6 @@ module.exports = class Forum {
     this.title = title;
     this.forumId = forumId;
     this.published = published;
-    this.isLocked = isLocked;
+    this.isLocked = isLocked ? 0 : 1;
   }
 };

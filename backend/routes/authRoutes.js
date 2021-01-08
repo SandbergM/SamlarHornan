@@ -11,7 +11,7 @@ const limit = (maxAttempts) => {
   });
 };
 
-router.post("", limit(5), authController.signIn);
+router.post("", authController.signIn);
 router.get("", authController.whoami);
 router.delete("", authController.logout);
 

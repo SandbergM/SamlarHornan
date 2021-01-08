@@ -8,9 +8,8 @@ module.exports = class InsertQuery {
   #params = {};
 
   constructor({ TABLE, PARAMS, ID }) {
-    console.log({ TABLE, PARAMS, ID });
     this.#query = `UPDATE ${TABLE} SET `;
-    this.#params = PARAMS;
+    this.#params = { ...PARAMS };
     this.#updates = this.#generateUpdates(PARAMS);
     this.#conditions = ` WHERE id = ${ID}`;
   }
@@ -18,7 +17,7 @@ module.exports = class InsertQuery {
   #generateUpdates(params) {
     let res = "";
     Object.entries(params).forEach(([key, val]) => {
-      if (val) {
+      if (val !== undefined) {
         res += ` ${key} = $${key} ,`;
       }
     });

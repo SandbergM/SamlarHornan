@@ -1,5 +1,5 @@
 const { commentSearch, removeComment } = require("../Queries/CommentQueries");
-const { requiredFields, isNumber } = require("../Helpers/Validation");
+const { requiredFields, requiredDataTypes } = require("../Helpers/Validation");
 const { timestampCurrentTime } = require("../Helpers/TimeStamp");
 const { findBy, saveToDb } = require("../Queries/SharedQueries");
 const Comment = require("../models/Comment");
@@ -15,9 +15,19 @@ const createComment = (req, res) => {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
+  let badRequest = validateDataInput({ ...req.body });
+
+  if (badRequest) {
+    return res.status(400).send(badRequest);
+  }
+
   let thread = findBy("threads", { id: threadId });
   if (!thread || thread.isLocked === 1) {
     return res.status(400).send(`Could not post to thread`);
+  }
+
+  if (!hasPermission(req.session.user, thread.id)) {
+    req.body.highlighted = false;
   }
 
   let comment = new Comment({
@@ -28,7 +38,7 @@ const createComment = (req, res) => {
 
   let savedComment = saveToDb("comments", comment);
   if (!savedComment) {
-    return res.status(400).send(`Could not complete request`);
+    return res.status(500).send(`Could not complete request`);
   }
 
   res
@@ -42,7 +52,12 @@ const createComment = (req, res) => {
 const commentParamSearch = (req, res) => {
   let comments = commentSearch(req.query);
   let found = comments.length;
-  res.status(found ? 200 : 404).send(found ? comments : `Not found`);
+
+  if (!found) {
+    return res.status(404).send(`Not found`);
+  }
+
+  res.status(200).send(comments);
 };
 
 /*
@@ -55,27 +70,40 @@ const commentParamSearch = (req, res) => {
 const deleteComment = (req, res) => {
   const { id } = req.params;
   const { user } = req.session;
-  let comment = findBy("comments", { id: id });
 
-  if (!hasPermission(user, comment)) {
-    return res.status(401).send(`Unauthorized`);
+  if (!hasPermission(user, comment.threadId)) {
+    res.statusMessage(`Unauthorized`);
+    res.status(401);
+    return;
   }
 
+  let comment = findBy("comments", { id: id });
+
   if (!comment) {
-    return res.status(404).send(`Not found`);
+    res.statusMessage(`A comment with ${id} was not found`);
+    res.status(404);
+    return;
   }
 
   let deleted = removeComment(id);
-
   res.status(deleted ? 200 : 400).send(deleted);
 };
 
-const hasPermission = (user, comment) => {
-  let thread = findBy("threads", { id: comment.threadId });
+const hasPermission = (user, threadId) => {
+  let thread = findBy("threads", { id: threadId });
   let forum = findBy("forums", { id: thread.forumId });
   let isAdmin = user.roles.includes("ADMIN");
   let isSubModerator = user.permissions[forum.url];
   return isAdmin || isSubModerator;
+};
+
+const validateDataInput = (params) => {
+  const { id, message, userId, highlighted, published, threadId } = params;
+  return requiredDataTypes({
+    string: { message },
+    number: { id, threadId, userId, published },
+    boolean: { highlighted },
+  });
 };
 
 module.exports = {
