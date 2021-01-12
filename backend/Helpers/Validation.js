@@ -41,7 +41,7 @@ const validPassword = (password) => {
   if (!password.match(/[A-Z]+/)) return `${start} one uppercase letter`;
   if (!password.match(/[0-9]+/)) return `${start} one digit`;
   if (!password.match(/[$@#&!]+/)) return `${start} one special character`;
-  if (password.length < 7) return `${start} 8 characters`;
+  if (password.length < 10) return `${start} 10 characters`;
   return false;
 };
 
