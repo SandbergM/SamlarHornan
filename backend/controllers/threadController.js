@@ -8,17 +8,14 @@ const Thread = require("../models/Thread");
 # CREATE
 */
 const createThread = (req, res) => {
-  const { title, forumUrl } = req.body;
-  let requestIncomplete = requiredFields({ title, forumUrl });
+  const { title, forumUrl, message } = req.body;
+  let requestIncomplete = requiredFields({ title, forumUrl, message });
 
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
-  req.body.published = timestampCurrentTime();
-  let thread = new Thread({ ...req.body });
-
-  let badInput = validateDataInput(thread);
+  let badInput = validateDataInput(req.body);
   if (badInput) {
     return res.status(400).send(badInput);
   }
@@ -27,6 +24,9 @@ const createThread = (req, res) => {
   if (!findBy("forums", { id: req.body.forumId })) {
     return res.status(400).send(`A forum with that id was not found`);
   }
+
+  req.body.published = timestampCurrentTime();
+  let thread = new Thread({ ...req.body, forumId: req.body.forumId });
 
   let savedThread = saveToDb("threads", thread);
   if (!savedThread) {
@@ -64,7 +64,7 @@ const updateThread = (req, res) => {
     return res.status(401).send(`Unauthorized`);
   }
 
-  let badRequest = validateDataInput({ ...req.body });
+  let badRequest = validateDataInput(req.body);
   if (badRequest) {
     return res.status(400).send(badRequest);
   }
@@ -107,7 +107,7 @@ const deleteThread = (req, res) => {
   res.status(deleted ? 200 : 400).send(deleted);
 };
 
-// Used to compare the data from the user is the correct type
+// Check for bad input - validate that the datatypes provided are of the type that is expected
 const validateDataInput = (params) => {
   const { id, title, forumId, isLocked, published } = params;
   return requiredDataTypes({
@@ -116,6 +116,7 @@ const validateDataInput = (params) => {
     boolean: { isLocked },
   });
 };
+
 // Checks if the current user is admin or moderator in the forum
 const hasPermission = (user, thread) => {
   let forum = findBy("forums", { id: thread.forumId });

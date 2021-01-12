@@ -14,28 +14,27 @@ const createForum = (req, res) => {
     url,
     categoryId,
   });
-
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
-  let badRequest = validateDataInput({ ...req.body });
+  let badRequest = validateDataInput(req.body);
 
   if (badRequest) {
+    console.log(badRequest);
     return res.status(400).send(badRequest);
   }
 
   if (findBy("forums", { name, url })) {
     return res.status(409).send(`Name or url already taken`);
   }
-
-  let forum = saveToDb("forums", new Forum({ name, description, url }));
+  let forum = saveToDb("forums", new Forum({ ...req.body }));
   saveToDb("roles", { type: "MODERATOR", forumId: forum.lastInsertRowid });
-  res.status(forum ? 200 : 400).send(forum ? forum : `Bad request`);
+  res.status(forum ? 201 : 400).send(forum ? forum : `Bad request`);
 };
 
 /*
-# CREATE
+# READ
 */
 const forumParamSearch = (req, res) => {
   let forums = forumSearch(req.query);
@@ -44,7 +43,7 @@ const forumParamSearch = (req, res) => {
 };
 
 /*
-# CREATE
+# UPDATE
 */
 const updateForum = () => {};
 
@@ -58,13 +57,12 @@ const deleteForum = (req, res) => {
   res.status(200).send({ deletedForum: removeForum(req.params.id) });
 };
 
-// Used to compare the data from the user is the correct type
+// Check for bad input - validate that the datatypes provided are of the type that is expected
 const validateDataInput = (params) => {
   const { id, name, description, url, categoryId } = params;
   return requiredDataTypes({
     string: { name, description, url },
-    number: { id },
-    number: { categoryId },
+    number: { id, categoryId },
   });
 };
 

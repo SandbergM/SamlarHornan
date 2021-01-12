@@ -1,46 +1,19 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import ForumTable from "../components/Forum/ForumTable";
 import SearchField from "../components/InputFields/SearchField";
 import Select from "../components/InputFields/Select";
+
+import { ForumContext } from "../context/ForumContext";
 
 const StartPage = () => {
   const [nameSearch, setNameSearch] = useState("");
   const [categorySearch, setCategorySearch] = useState("");
 
-  const [forums, setForums] = useState(null);
-  const [categories, setCategories] = useState(null);
-
-  const fetchForums = async () => {
-    let forums = await fetch(
-      `/api/v1/forums?name=${nameSearch}&categoryId=${categorySearch}`
-    );
-    switch (forums.status) {
-      case 200:
-        setForums(await forums.json());
-        break;
-      default:
-        setForums(null);
-    }
-  };
-
-  const fetchCategories = async () => {
-    let categories = await fetch(`/api/v1/categories`);
-    switch (categories.status) {
-      case 200:
-        setCategories(await categories.json());
-        break;
-      default:
-        setCategories(null);
-    }
-  };
+  const { forums, categories, fetchForums } = useContext(ForumContext);
 
   useEffect(() => {
-    fetchForums();
+    fetchForums(nameSearch, categorySearch);
   }, [nameSearch, categorySearch]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   return (
     <div className="col-12 pt-3">

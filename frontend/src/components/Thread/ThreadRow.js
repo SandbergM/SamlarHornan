@@ -2,12 +2,15 @@ import React, { useContext } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { convertTimeStamp } from "../../utils/TimeStampToDateAndTime";
 import { UserContext } from "../../context/UserContext";
+import { ForumContext } from "../../context/ForumContext";
 import { MdDelete } from "react-icons/md";
 
-const ThreadRow = ({ thread, deleteThread }) => {
+const ThreadRow = ({ thread }) => {
   let history = useHistory();
   let { forumUrl } = useParams();
-  let { isAdmin, permissions, user } = useContext(UserContext);
+
+  let { isAdmin, permissions } = useContext(UserContext);
+  const { deleteThread } = useContext(ForumContext);
 
   const redirectToThread = (id) => {
     history.push(`/forum/${forumUrl}/thread/${id}`);

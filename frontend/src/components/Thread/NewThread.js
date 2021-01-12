@@ -16,10 +16,10 @@ const NewThread = ({ forumUrl }) => {
 
   let history = useHistory();
   const [newThread, setNewThread] = useState({});
-  const [newComment, setNewComment] = useState({});
 
   const publishThread = async (e) => {
     e.preventDefault();
+    console.log({ ...newThread, forumUrl: forumUrl });
     let thread = await fetch(`/api/v1/threads`, {
       method: "POST",
       body: JSON.stringify({ ...newThread, forumUrl: forumUrl }),
@@ -27,17 +27,7 @@ const NewThread = ({ forumUrl }) => {
     });
     if (thread.status === 201) {
       thread = await thread.json();
-      await fetch(`/api/v1/comments`, {
-        method: "POST",
-        body: JSON.stringify({
-          ...newComment,
-          threadId: thread.lastInsertRowid,
-          highlighted: 0,
-        }),
-        headers: { "Content-type": "application/json;charset=utf-8" },
-      }).then(
-        history.push(`/forum/${forumUrl}/thread/${thread.lastInsertRowid}`)
-      );
+      history.push(`/forum/${forumUrl}/thread/${thread.lastInsertRowid}`);
     }
   };
 
@@ -79,7 +69,7 @@ const NewThread = ({ forumUrl }) => {
                 type="textarea"
                 placeholder="Meddelande"
                 onChange={(e) =>
-                  setNewComment({ ...newComment, message: e.target.value })
+                  setNewThread({ ...newThread, message: e.target.value })
                 }
               />
             </FormGroup>

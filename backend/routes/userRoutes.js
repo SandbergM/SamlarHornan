@@ -13,7 +13,8 @@ const limit = (maxAttempts) => {
 
 router.get("", userController.userParamSearch);
 router.post("", userController.registerAccount);
-router.put("/:id", userController.updateAccount);
+router.put("/upgrade", userController.upgradeAccount);
+router.put("/downgrade", userController.downgradeAccount);
 router.delete("/:id", userController.deleteAccount);
 
 module.exports = router;

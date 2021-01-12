@@ -3,7 +3,7 @@ Checks if any field is undefined and sends back an response if a value is missin
 */
 const requiredFields = (fields) => {
   for (let [key, val] of Object.entries(fields)) {
-    if (val === undefined) {
+    if (!val) {
       return key;
     }
   }
@@ -14,7 +14,6 @@ Checks if the datatype is correct
 */
 const requiredDataTypes = (data) => {
   for (let [dataType, fields] of Object.entries(data)) {
-    console.log(fields);
     if (fields) {
       for (let [key, val] of Object.entries(fields)) {
         if (val && typeof val !== dataType) {

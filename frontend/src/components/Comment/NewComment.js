@@ -10,24 +10,23 @@ import {
 } from "reactstrap";
 
 const NewComment = ({ threadId, isModerator, appendComment }) => {
-  const [modal, setModal] = useState(false);
   const toggle = () => setModal(!modal);
-
-  const [message, setMessage] = useState({});
-  const [highlighted, setHighlighted] = useState(false);
+  const [newComment, setNewComment] = useState(null);
+  const [modal, setModal] = useState(false);
 
   const publishComment = async (e) => {
     e.preventDefault();
+    console.log(newComment);
     let comment = await fetch(`/api/v1/comments`, {
       method: "POST",
       body: JSON.stringify({
-        message: message,
-        highlighted: highlighted,
-        threadId: threadId,
+        message: newComment.message,
+        highlighted: newComment.highlighted === "true",
+        threadId: parseInt(threadId),
       }),
       headers: { "Content-type": "application/json;charset=utf-8" },
     });
-    if (comment.status === 201) {
+    if (comment.ok) {
       appendComment(await comment.json());
       setModal(!modal);
     }
@@ -53,7 +52,9 @@ const NewComment = ({ threadId, isModerator, appendComment }) => {
                 className="light-grey-background tradeHub-input"
                 type="textarea"
                 placeholder="Meddelande"
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) =>
+                  setNewComment({ ...newComment, message: e.target.value })
+                }
               />
             </FormGroup>
             {isModerator && (
@@ -63,7 +64,10 @@ const NewComment = ({ threadId, isModerator, appendComment }) => {
                   type="select"
                   name="select"
                   onChange={(e) => {
-                    setHighlighted(e.target.value);
+                    setNewComment({
+                      ...newComment,
+                      highlighted: e.target.value,
+                    });
                   }}
                 >
                   <option value={false}>Spara som vanligt inlägg</option>
