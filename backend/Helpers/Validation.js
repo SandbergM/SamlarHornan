@@ -3,7 +3,7 @@ Checks if any field is undefined and sends back an response if a value is missin
 */
 const requiredFields = (fields) => {
   for (let [key, val] of Object.entries(fields)) {
-    if (!val) {
+    if (val === undefined) {
       return key;
     }
   }
