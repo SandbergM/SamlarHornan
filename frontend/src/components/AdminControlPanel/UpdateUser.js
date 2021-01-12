@@ -51,9 +51,9 @@ const UpdateUser = () => {
           );
         })}
       {profilToUpdate && (
-        <div className="row ">
-          <RemoveRole user={profilToUpdate} />
-          <AddRole user={profilToUpdate} />
+        <div className="row">
+          <RemoveRole user={profilToUpdate} setUser={setProfileToUpdate} />
+          <AddRole user={profilToUpdate} setUser={setProfileToUpdate} />
         </div>
       )}
     </div>

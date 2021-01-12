@@ -6,10 +6,15 @@ const RegisterModal = ({ toggleModalState }) => {
   const [newUser, setNewUser] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const { setUser } = useContext(UserContext);
+  const { whoami } = useContext(UserContext);
 
   const register = async (e) => {
     e.preventDefault();
+
+    if (weakPassword(newUser.password)) {
+      setErrorMessage(weakPassword(newUser.password));
+      return;
+    }
 
     let res = await fetch(`/api/v1/users`, {
       method: "POST",
@@ -17,18 +22,28 @@ const RegisterModal = ({ toggleModalState }) => {
       headers: { "Content-type": "application/json;charset=utf-8" },
     });
 
-    if (res.status === 200) {
-      let user = await fetch(`/api/v1/auth`, {
-        method: "POST",
-        body: JSON.stringify(newUser),
-        headers: { "Content-type": "application/json;charset=utf-8" },
-      });
-      if (user.status === 200) {
-        setUser(await user.json());
-      }
-    } else {
-      setErrorMessage(res.statusText);
+    switch (res.status) {
+      case 201:
+        await fetch(`/api/v1/auth`, {
+          method: "POST",
+          body: JSON.stringify(newUser),
+          headers: { "Content-type": "application/json;charset=utf-8" },
+        }).then(whoami());
+        break;
+      case 409:
+        setErrorMessage(`Användarnamnet eller mailen du angivit är upptagen`);
+        break;
     }
+  };
+
+  const weakPassword = (password) => {
+    let start = `Ditt lösenord måste innehålla minst `;
+    if (!password.match(/[a-z]+/)) return `${start} en liten bokstav`;
+    if (!password.match(/[A-Z]+/)) return `${start} en stor bokstav`;
+    if (!password.match(/[0-9]+/)) return `${start} en siffra`;
+    if (!password.match(/[!@#$%^&*]+/)) return `${start} ett specialtecken`;
+    if (password.length < 7) return `${start} 8 tecken långt`;
+    return false;
   };
 
   return (

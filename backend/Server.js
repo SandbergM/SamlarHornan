@@ -20,7 +20,7 @@ module.exports = class Server {
     this.#addSession();
     this.#addAcl();
     this.#addJsonCheck();
-    this.#addLogger();
+    //this.#addLogger();
     this.#addRouter();
     this.#run();
   }

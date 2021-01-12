@@ -9,17 +9,23 @@ const Thread = require("../models/Thread");
 */
 const createThread = (req, res) => {
   const { title, forumUrl, message } = req.body;
-  let requestIncomplete = requiredFields({ title, forumUrl, message });
 
+  // A thread is required to have a title, forumUrl and a message
+  // This is small helper-method that checks if any of the values are missing
+  let requestIncomplete = requiredFields({ title, forumUrl, message });
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
+  // To prevent the database/server from crashing, i have a small
+  // helper-method that checks that the provided data has the correct type
   let badInput = validateDataInput(req.body);
   if (badInput) {
     return res.status(400).send(badInput);
   }
 
+  // Checks if the forumUrl provided is in the db, and then fetches the
+  // forum id to be used as a FK to the threads forumId
   req.body.forumId = findBy("forums", { url: forumUrl }).id || -1;
   if (!findBy("forums", { id: req.body.forumId })) {
     return res.status(400).send(`A forum with that id was not found`);
@@ -60,10 +66,12 @@ const threadParamSearch = (req, res) => {
 const updateThread = (req, res) => {
   let thread = findBy("threads", { id: req.params.id });
 
+  // Checks if the user is an admin or sub-forum-moderator
   if (!hasPermission(req.session.user, thread)) {
     return res.status(401).send(`Unauthorized`);
   }
 
+  // Check for bad datatypes
   let badRequest = validateDataInput(req.body);
   if (badRequest) {
     return res.status(400).send(badRequest);
@@ -94,6 +102,7 @@ const deleteThread = (req, res) => {
   const { user } = req.session;
   let thread = findBy("threads", { id: id });
 
+  // Checks if the user is an admin or sub-forum-moderator
   if (!hasPermission(user, thread)) {
     return res.status(401).send(`Unauthorized`);
   }
