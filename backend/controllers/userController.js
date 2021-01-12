@@ -1,4 +1,9 @@
-const { userSearch, removeUser } = require("../queries/UserQueries");
+const {
+  userSearch,
+  removeUser,
+  removeRole,
+  addRole,
+} = require("../queries/UserQueries");
 const { findBy, saveToDb } = require("../Queries/SharedQueries");
 const {
   requiredFields,
@@ -24,7 +29,7 @@ const registerAccount = (req, res) => {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
-  let badInput = validateDataInput({ ...req.body });
+  let badInput = validateDataInput(req.body);
 
   if (badInput) {
     return res.status(400).send(badInput);
@@ -50,7 +55,9 @@ const registerAccount = (req, res) => {
 # READ
 */
 const userParamSearch = (req, res) => {
-  let users = userSearch(req.query);
+  const { user } = req.session;
+  let admin = user && user.roles.includes("ADMIN");
+  let users = userSearch(req.query, admin);
   let found = users.length;
   res.status(found ? 200 : 404).json(found ? users : `Not found`);
 };
@@ -58,7 +65,32 @@ const userParamSearch = (req, res) => {
 /*
 # UPDATE
 */
-const updateAccount = (req, res) => {};
+const upgradeAccount = (req, res) => {
+  const { userId, forumId } = req.body;
+  let user = findBy("users", { id: userId });
+  let forum = findBy("forums", { id: forumId });
+
+  if (!user || !forum) {
+    return res.status(404).send(`Not found`);
+  }
+
+  let role = findBy("roles", { forumId });
+  addRole({ userId, roleId: role.id });
+  res.status(200).send({ accountUpdated: true });
+};
+
+const downgradeAccount = (req, res) => {
+  const { userId, roleId } = req.body;
+  console.log(userId, roleId);
+  let user = findBy("users", { id: userId });
+  let role = findBy("roles", { forumId: roleId });
+
+  if (!user || !role) {
+    return res.status(400).send(`Not found`);
+  }
+  removeRole({ userId, roleId: role.id });
+  res.status(200).send({ roleRemoved: true });
+};
 
 /*
 # DELETE
@@ -84,6 +116,7 @@ const validateDataInput = (params) => {
 module.exports = {
   userParamSearch,
   registerAccount,
-  updateAccount,
+  upgradeAccount,
+  downgradeAccount,
   deleteAccount,
 };

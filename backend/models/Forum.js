@@ -8,7 +8,6 @@ module.exports = class Forum {
     this.name = name;
     this.description = description;
     this.url = url;
-    this.url = url;
     this.categoryId = categoryId;
   }
 };

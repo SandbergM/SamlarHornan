@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Collapse,
@@ -11,6 +11,7 @@ import {
 import mainLogo from "../../images/logo.png";
 import { UserContext } from "../../context/UserContext";
 import AuthenticationModal from "../Authentication/AuthenticationModal";
+import AdminControlPanel from "../AdminControlPanel/AdminControlPanel";
 
 const Header = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,13 +49,8 @@ const Header = (props) => {
                 <AuthenticationModal showLogin={false} label={`Registrera`} />
               </NavbarText>
             ) : (
-              <NavbarText
-                className="secondary-tc bold pointer ml-4 mr-4"
-                onClick={() => {
-                  console.log("My account");
-                }}
-              >
-                <p className="no-margin">Mitt konto</p>
+              <NavbarText className="secondary-tc bold pointer ml-4 mr-4">
+                <AdminControlPanel />
               </NavbarText>
             )}
           </div>

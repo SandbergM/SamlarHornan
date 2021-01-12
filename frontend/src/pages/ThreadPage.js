@@ -31,7 +31,10 @@ const ThreadPage = () => {
     switch (thread.status) {
       case 200:
         thread = await thread.json();
-        setThread(thread[0]);
+        setThread({
+          ...thread[0],
+          isLocked: thread[0].isLocked ? true : false,
+        });
         break;
       default:
         setComments(null);
@@ -45,21 +48,20 @@ const ThreadPage = () => {
     let updatedArr = comments.filter((comment) => {
       if (comment.id !== id) return comments;
     });
-    setComments(updatedArr);
+    setComments([...updatedArr]);
   };
 
   const appendComment = (comment) => {
-    setComments([...comments, { ...comment, sender: user }]);
+    setComments([...(comments || []), { ...comment, sender: user }]);
   };
 
   const lockThread = async () => {
-    let locked = thread.isLocked === 0 ? 1 : 0;
     let res = await fetch(`/api/v1/threads/${threadId}`, {
       method: "PUT",
-      body: JSON.stringify({ isLocked: locked }),
+      body: JSON.stringify({ isLocked: !thread.isLocked }),
       headers: { "Content-type": "application/json;charset=utf-8" },
     });
-    if (res.status === 200) {
+    if (res.ok) {
       setThread({ ...thread, isLocked: !thread.isLocked });
     }
   };
@@ -70,7 +72,7 @@ const ThreadPage = () => {
   }, [forumUrl]);
 
   return (
-    <div className="d-flex justify-content-around ">
+    <div className="d-flex justify-content-around">
       {thread && (
         <div className="col-12">
           <div className="row">
@@ -103,6 +105,9 @@ const ThreadPage = () => {
                 )}
               </div>
             )}
+            <div className="col-12 primary-tc secondary-bgc bold p-2 pl-5 ">
+              {thread && <h5>{thread.message}</h5>}
+            </div>
             <div className="col-12 primary-tc secondary-bgc bold p-2 pl-5 ">
               <div className="row">
                 <h5 className="col-8">{convertTimeStamp(thread.published)}</h5>

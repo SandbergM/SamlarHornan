@@ -15,14 +15,14 @@ const createComment = (req, res) => {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
 
-  let badRequest = validateDataInput({ ...req.body });
+  let badRequest = validateDataInput(req.body);
 
   if (badRequest) {
     return res.status(400).send(badRequest);
   }
 
   let thread = findBy("threads", { id: threadId });
-  if (!thread || thread.isLocked === 1) {
+  if (!thread || thread.isLocked) {
     return res.status(400).send(`Could not post to thread`);
   }
 
@@ -71,7 +71,7 @@ const deleteComment = (req, res) => {
   const { id } = req.params;
   const { user } = req.session;
 
-  if (!hasPermission(user, comment.threadId)) {
+  if (!hasPermission(user, req.body.threadId)) {
     res.statusMessage(`Unauthorized`);
     res.status(401);
     return;

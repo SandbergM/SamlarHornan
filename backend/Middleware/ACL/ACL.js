@@ -12,10 +12,12 @@ module.exports = (req, res, next) => {
   let requestedPath = trimUrl(req.path);
 
   let permissions = Object.entries(ACLJson).filter(([key, val]) => {
+    /*
     let subUrl = getSubforumUrl(key, requestedPath);
     let threadId = getThreadId(key, requestedPath);
     key = key.replace("{subforum-url}", subUrl);
     key = key.replace("{threadId}", threadId);
+    */
     if (requestedPath.startsWith(key)) {
       for (let role of val[req.method].split(", ")) {
         if (userRoles.includes(role)) {

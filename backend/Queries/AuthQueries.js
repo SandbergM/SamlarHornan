@@ -1,7 +1,6 @@
 const SearchQuery = require("./QueryBuilders/SearchQuery");
 const Encrypt = require("../middleware/Encryption/Encrypt");
-const sqlite3 = require("better-sqlite3");
-const db = sqlite3("./database.db");
+const { getUserRolesAndPermissions } = require("./UserQueries");
 
 const userAuthentication = (params) => {
   const { email, password } = params;
@@ -19,27 +18,6 @@ const userAuthentication = (params) => {
   }
 
   return user;
-};
-
-const getUserRolesAndPermissions = (id) => {
-  let roles = ["USER"];
-  let permissions = {};
-  let statement = db.prepare(`
-      SELECT * FROM roles, usersXroles
-      LEFT JOIN forums ON roles.forumId = forums.id
-      WHERE usersXroles.userId = ${id} 
-      AND usersXroles.roleId = roles.id 
-      GROUP BY roles.id
-    `);
-  statement.all({ id: id });
-  let result = statement.all({ id: id });
-  result.forEach((val) => {
-    roles.push(val.type);
-    if (val.url) {
-      permissions[val.url] = val.forumId;
-    }
-  });
-  return { roles: [...new Set(roles)], permissions };
 };
 
 module.exports = {
