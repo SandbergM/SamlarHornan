@@ -32,7 +32,11 @@ const createThread = (req, res) => {
   }
 
   req.body.published = timestampCurrentTime();
-  let thread = new Thread({ ...req.body, forumId: req.body.forumId });
+  let thread = new Thread({
+    ...req.body,
+    forumId: req.body.forumId,
+    isLocked: false,
+  });
 
   let savedThread = saveToDb("threads", thread);
   if (!savedThread) {
