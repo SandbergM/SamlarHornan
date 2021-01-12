@@ -19,11 +19,6 @@ const User = require("../models/User");
 const registerAccount = (req, res) => {
   const { email, username, password } = req.body;
   let requestIncomplete = requiredFields({ email, username });
-  let weakPassword = validPassword(password);
-
-  if (weakPassword) {
-    return res.status(400).send(weakPassword);
-  }
 
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
@@ -33,6 +28,11 @@ const registerAccount = (req, res) => {
 
   if (badInput) {
     return res.status(400).send(badInput);
+  }
+
+  let weakPassword = validPassword(password);
+  if (weakPassword) {
+    return res.status(400).send(weakPassword);
   }
 
   if (!validEmail(email)) {
