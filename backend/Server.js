@@ -63,8 +63,8 @@ module.exports = class Server {
   }
 
   #run() {
-    this.app.listen(PORT || 8080, () => {
-      console.log(`Listening on port ${PORT || 8080}`);
+    this.app.listen(PORT || 4001, () => {
+      console.log(`Listening on port ${PORT || 4001}`);
     });
   }
 };
