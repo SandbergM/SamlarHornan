@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const store = require("better-express-store");
 
-const { PORT, SECRET } = require("./config");
+const { PORT, SECRET } = require("./config/index");
 
 module.exports = class Server {
   static hasBeenInstantiated = false;
