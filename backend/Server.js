@@ -26,6 +26,7 @@ module.exports = class Server {
   }
 
   #addSession() {
+    console.log(SECRET);
     this.app.use(
       session({
         secret: SECRET,
@@ -63,8 +64,8 @@ module.exports = class Server {
   }
 
   #run() {
-    this.app.listen(PORT || 4001, () => {
-      console.log(`Listening on port ${PORT || 4001}`);
+    this.app.listen(4001, () => {
+      console.log(`Listening on port ${4001}`);
     });
   }
 };

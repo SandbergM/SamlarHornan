@@ -42,10 +42,13 @@ const removeForum = (id) => {
       ENTITY: { threadId: thread.id },
     }).run();
   }
-  let role = new SearchQuery({ TABLE: "roles", EQUAL: { forumId: id } }).run();
+  let role = new SearchQuery({
+    TABLE: "roles",
+    EQUAL: { forumId: id },
+  }).run()[0];
   new DeleteQuery({
     TABLE: "usersXroles",
-    ENTITY: { forumId: role.forumId },
+    ENTITY: { roleId: role.id },
   }).run();
   new DeleteQuery({ TABLE: "threads", ENTITY: { forumId: id } }).run();
   new DeleteQuery({ TABLE: "roles", ENTITY: { forumId: id } }).run();
