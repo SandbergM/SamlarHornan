@@ -1,5 +1,5 @@
 const SearchQuery = require("./QueryBuilders/SearchQuery");
-const Encrypt = require("../middleware/Encryption/Encrypt");
+const Encrypt = require("../Middleware/Encryption/Encrypt");
 const { getUserRolesAndPermissions } = require("./UserQueries");
 
 const userAuthentication = (params) => {

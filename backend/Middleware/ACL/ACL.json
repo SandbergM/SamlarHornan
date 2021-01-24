@@ -44,5 +44,10 @@
         "GET" : "USER, ADMIN",
         "POST": "ANONYMOUS", 
         "DELETE" : "USER, ADMIN"
+    },
+
+    "/api/v1/api-docs": 
+    { 
+        "GET": "ANONYMOUS, USER, MODERATOR, ADMIN"
     }
 }

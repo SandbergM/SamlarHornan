@@ -14,6 +14,13 @@ const createForum = (req, res) => {
     url,
     categoryId,
   });
+
+  let categoryExists = findBy("categories", { id: categoryId });
+
+  if (!categoryExists) {
+    return res.status(404).send(`Category not found`);
+  }
+
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
   }
@@ -21,7 +28,6 @@ const createForum = (req, res) => {
   let badRequest = validateDataInput(req.body);
 
   if (badRequest) {
-    console.log(badRequest);
     return res.status(400).send(badRequest);
   }
 

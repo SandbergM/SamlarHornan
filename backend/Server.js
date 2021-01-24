@@ -1,8 +1,10 @@
 const express = require("express");
 const session = require("express-session");
 const store = require("better-express-store");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
-const { PORT, SECRET } = require("./config/index");
+const { SECRET } = require("./config/index");
 
 module.exports = class Server {
   static hasBeenInstantiated = false;
@@ -26,7 +28,6 @@ module.exports = class Server {
   }
 
   #addSession() {
-    console.log(SECRET);
     this.app.use(
       session({
         secret: SECRET,

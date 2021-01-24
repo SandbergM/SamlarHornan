@@ -1,0 +1,659 @@
+{
+    "swagger": "2.0",
+    "info" : {
+        "version" : "1.0.0",
+        "title" : "Samlar Hornan API Documentation",
+        "description" : "This is the documentation for the Samlar Hornan API"
+    },
+
+    "tags" : [
+        {
+            "name" : "Auth"
+        },
+        {
+            "name" : "Forums"
+        },
+        {
+            "name" : "Threads"
+        },
+        {
+            "name" : "Comments"
+        },
+        {
+            "name" : "Users"
+        },
+        {
+            "name" : "Categories"
+        }
+    ],
+
+    "paths": {
+
+        "/api/v1/auth" : {
+            "post" : {
+                "tags": ["Auth"],
+                "summary": "Login",
+                "description": "This is only accessible if the user is not already logged in",
+                "parameters": [{
+                    "in" : "body",
+                    "name" : "body",
+                    "schema": {
+                        "type" : "object",
+                        "properties": {
+                            "email" : {
+                                "type" : "string"
+                            },
+                            "password" : {
+                                "type" : "string"
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "400" : {
+                        "description": "Bad request"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "get" : {
+                "tags": ["Auth"],
+                "summary": "Who Am I",
+                "description": "This is only accessible if the user is already logged in",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "delete" : {
+                "tags": ["Auth"],
+                "summary": "Log out",
+                "description": "This is only accessible if the user is already logged in",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+
+        "/api/v1/forums" : {
+            "post" : {
+                "tags": ["Forums"],
+                "summary": "Create a new sub-forum",
+                "description": "This is only accessible by users that have the ADMIN role",
+                "parameters": [{
+                    "in": "body",
+                    "name": "forum",
+                    "schema": {"$ref": "#/definitions/Forum"}
+                }],
+                "responses": {
+                    "201" : {
+                        "description": "OK"
+                    },
+                    "400" : {
+                        "description": "Bad request"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "409" : {
+                        "description": "Name or url already taken"
+                    }
+                }
+            },
+            "get" : {
+                "tags": ["Forums"],
+                "summary": "Forum search with optional params",
+                "description": "This is accessible by anyone using the system",
+                "parameters": [
+                {
+                    "in": "query",
+                    "name": "name",
+                    "description": "Full/Partial name"
+                }, 
+                {
+                    "in": "query",
+                    "name": "url",
+                    "description": "Full/Partial url"
+                },
+                {
+                    "in": "query",
+                    "name": "description",
+                    "description": "Full/Partial description"
+                },
+                {
+                    "in": "query",
+                    "name": "categoryId",
+                    "description": "Category Id"
+                }
+            ],
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+        "/api/v1/forums/{id}" : {
+            "delete" : {
+                "tags": ["Forums"],
+                "summary": "Delete a sub-forum",
+                "description": "This is only accessible by users that have the ADMIN role",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id"
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+        "/api/v1/threads" : {
+            "post" : {
+                "tags": ["Threads"],
+                "summary": "Create a new thread",
+                "description": "This is only accessible by all authenticated users",
+                "parameters": [{
+                    "in": "body",
+                    "name": "thread",
+                    "schema": {
+                        "type" : "object",
+                        "properties": {
+                            "title" : {
+                                "type" : "string",
+                                "required": true
+                            },
+                            "forumUrl" : {
+                                "type" : "string",
+                                "required": true
+                            },
+                            "message" : {
+                                "type" : "string",
+                                "required": true
+                            }
+                        }
+                    }
+                }],
+                "responses": {
+                    "201" : {
+                        "description": "OK"
+                    },
+                    "400" : {
+                        "description": "Bad request"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "get" : {
+                "tags": ["Threads"],
+                "summary": "Thread search with optional params",
+                "description": "This is accessible by anyone using the system",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "forumUrl",
+                        "type": "string",
+                        "description": "A correct forumUrl is needed",
+                        "required": true
+                    },
+                    {
+                        "in": "query",
+                        "name": "title",
+                        "type": "string",
+                        "description": "Full/Partial title"
+                    },
+                    {
+                        "in": "query",
+                        "name": "forumId",
+                        "type": "number"
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+        "/api/v1/threads/{id}" : {
+            "delete" : {
+                "tags": ["Threads"],
+                "summary": "Log out",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id"
+                    }
+                ],
+                "description": "This is only accessible by users that have the ADMIN role or is a sub-moderator",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            },
+            "put" : {
+                "tags": ["Threads"],
+                "summary": "Thread search with optional params",
+                "description": "This is only accessible by users that have the ADMIN role or is a sub-moderator",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id"
+                    },
+                    {
+                    "in": "body",
+                    "name": "thread",
+                    "schema": {"$ref": "#/definitions/Thread"}
+                }],
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "400" : {
+                        "description": "Bad request"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+
+        "/api/v1/comments" : {
+            "post" : {
+                "tags": ["Comments"],
+                "summary": "Create a new comment",
+                "description": "This is only accessible by all authenticated users",
+                "parameters": [{
+                    "in": "body",
+                    "name": "comment",
+                    "schema": {"$ref": "#/definitions/Comment"}
+                }],
+                "responses": {
+                    "201" : {
+                        "description": "OK"
+                    },
+                    "400" : {
+                        "description": "Bad request"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    }
+                }
+            },
+            "get" : {
+                "tags": ["Comments"],
+                "summary": "Comment search with optional params",
+                "description": "This is accessible by anyone using the system",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+            
+        },
+
+
+        "/api/v1/comments/{id}" : {
+            "delete" : {
+                "tags": ["Comments"],
+                "summary": "Delete comment",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id"
+                    }],
+                "description": "This is only accessible by users that have the ADMIN role or is a sub-moderator",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+        "/api/v1/users" : {
+            "post" : {
+                "tags": ["Users"],
+                "summary": "Create a new user",
+                "description": "This is only accessible if the users isn't authenticated",
+                "parameters": [{
+                    "in": "body",
+                    "name": "thread",
+                    "schema": {"$ref": "#/definitions/User"}
+                }],
+                "responses": {
+                    "201" : {
+                        "description": "OK"
+                    },
+                    "400" : {
+                        "description": "Bad request"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "409" : {
+                        "description": "Conflict"
+                    }
+                }
+            },
+            "get" : {
+                "tags": ["Users"],
+                "summary": "Thread search with optional params",
+                "description": "This is accessible by anyone using the system",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "type": "number"
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "username",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+        "/api/v1/users/upgrade" : {
+            "put" : {
+                "tags": ["Users"],
+                "summary": "Grant a users moderator role in a sub-forum",
+                "parameters": [{
+                    "in": "body",
+                    "name": "thread",
+                    "schema": {
+                        "type" : "object",
+                        "properties": {
+                            "userId" : {
+                                "type" : "number",
+                                "required" : true
+                            },
+                            "forumId" : {
+                                "type" : "number",
+                                "required" : true
+                            }
+                        }
+                    }
+                }],
+                "description": "This is only accessible by users that have the ADMIN role",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+        "/api/v1/users/downgrade" : {
+            "put" : {
+                "tags": ["Users"],
+                "summary": "Revoke a user moderator role in a sub-forum",
+                "parameters": [{
+                    "in": "body",
+                    "name": "thread",
+                    "schema": {
+                        "type" : "object",
+                        "properties": {
+                            "userId" : {
+                                "type" : "number",
+                                "required" : true
+                            },
+                            "roleId" : {
+                                "type" : "number",
+                                "required" : true
+                            }
+                        }
+                    }
+                }],
+                "description": "This is only accessible by users that have the ADMIN role",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+
+        "/api/v1/users/{id}" : {
+            "delete" : {
+                "tags": ["Users"],
+                "summary": "Delete user",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id"
+                    }],
+                "description": "This is only accessible by users that have the ADMIN role",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "401" : {
+                        "description": "Unauthorized"
+                    },
+                    "403" : {
+                        "description": "Forbidden"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+
+
+        "/api/v1/categories" : {
+            "get" : {
+                "tags": ["Categories"],
+                "description": "This is accessible by anyone using the system",
+                "responses": {
+                    "200" : {
+                        "description": "OK"
+                    },
+                    "404" : {
+                        "description": "Not found"
+                    }
+                }
+            }
+        }
+
+    },
+
+
+    "definitions": {
+        "User" : {
+            "type" : "object",
+            "properties": {
+                "email" : {
+                    "type" : "string"
+                },
+                "password" : {
+                    "type" : "string"
+                },
+                "username" : {
+                    "type" : "string"
+                },
+                "firstName" : {
+                    "type" : "string"
+                },
+                "lastName" : {
+                    "type" : "string"
+                }
+            }
+        },
+
+        "Forum" : {
+            "type" : "object",
+            "properties": {
+                "name" : {
+                    "type" : "string"
+                },
+                "description" : {
+                    "type" : "string"
+                },
+                "url" : {
+                    "type" : "string"
+                },
+                "categoryId" : {
+                    "type" : "number"
+                }
+            }
+        },
+
+        "Thread" : {
+            "type" : "object",
+            "properties": {
+                "title" : {
+                    "type" : "string"
+                },
+                "message" : {
+                    "type" : "string"
+                },
+                "forumId" : {
+                    "type" : "number"
+                },
+                "isLocked" : {
+                    "type" : "boolean"
+                }
+            }
+        },
+
+        "Comment" : {
+            "type" : "object",
+            "properties": {
+                "message" : {
+                    "type" : "string"
+                },
+                "highlighted" : {
+                    "type" : "boolean"
+                },
+                "threadId" : {
+                    "type" : "number"
+                }
+            }
+        }
+
+    }
+}
