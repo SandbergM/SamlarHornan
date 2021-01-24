@@ -21,14 +21,14 @@ const createThread = (req, res) => {
   // helper-method that checks that the provided data has the correct type
   let badInput = validateDataInput(req.body);
   if (badInput) {
-    return res.status(400).send(badInput);
+    return res.status(404).send(badInput);
   }
 
   // Checks if the forumUrl provided is in the db, and then fetches the
   // forum id to be used as a FK to the threads forumId
   req.body.forumId = findBy("forums", { url: forumUrl }).id || -1;
   if (!findBy("forums", { id: req.body.forumId })) {
-    return res.status(400).send(`A forum with that id was not found`);
+    return res.status(400).send(`A forum with that url was not found`);
   }
 
   req.body.published = timestampCurrentTime();

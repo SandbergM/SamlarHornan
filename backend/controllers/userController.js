@@ -3,7 +3,7 @@ const {
   removeUser,
   removeRole,
   addRole,
-} = require("../queries/UserQueries");
+} = require("../Queries/UserQueries");
 const { findBy, saveToDb } = require("../Queries/SharedQueries");
 const {
   requiredFields,

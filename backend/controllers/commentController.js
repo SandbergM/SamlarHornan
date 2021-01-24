@@ -11,19 +11,18 @@ const createComment = (req, res) => {
   const { message, highlighted, threadId } = req.body;
 
   let requestIncomplete = requiredFields({ message, highlighted, threadId });
-  if (requestIncomplete) {
-    return res.status(400).send(`Missing : ${requestIncomplete}`);
-  }
-
   let badRequest = validateDataInput(req.body);
 
-  if (badRequest) {
-    return res.status(400).send(badRequest);
+  if (badRequest || requestIncomplete) {
+    return res.status(400).send(badRequest || requestIncomplete);
   }
 
   let thread = findBy("threads", { id: threadId });
-  if (!thread || thread.isLocked) {
-    return res.status(400).send(`Could not post to thread`);
+  if (!thread) {
+    return res.status(400).send(`Not found`);
+  }
+  if (thread.isLocked === 1) {
+    return res.status(400).send(`That thread is locked`);
   }
 
   if (!hasPermission(req.session.user, thread.id)) {
@@ -72,16 +71,13 @@ const deleteComment = (req, res) => {
   const { user } = req.session;
 
   if (!hasPermission(user, req.body.threadId)) {
-    res.statusMessage(`Unauthorized`);
-    res.status(401);
-    return;
+    return res.send(`Unauthorized`).status(401);
   }
 
   let comment = findBy("comments", { id: id });
 
   if (!comment) {
-    res.statusMessage(`A comment with ${id} was not found`);
-    res.status(404);
+    res.status(404).send(`Not found`);
     return;
   }
 

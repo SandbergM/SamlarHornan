@@ -1,4 +1,4 @@
-const ACLJson = require("./acl.json");
+const ACLJson = require("./ACL.json");
 
 module.exports = (req, res, next) => {
   let userRoles = ["*"];
@@ -12,12 +12,6 @@ module.exports = (req, res, next) => {
   let requestedPath = trimUrl(req.path);
 
   let permissions = Object.entries(ACLJson).filter(([key, val]) => {
-    /*
-    let subUrl = getSubforumUrl(key, requestedPath);
-    let threadId = getThreadId(key, requestedPath);
-    key = key.replace("{subforum-url}", subUrl);
-    key = key.replace("{threadId}", threadId);
-    */
     if (requestedPath.startsWith(key)) {
       for (let role of val[req.method].split(", ")) {
         if (userRoles.includes(role)) {
@@ -26,7 +20,6 @@ module.exports = (req, res, next) => {
       }
     }
   });
-
   if (Object.keys(permissions).length) {
     next();
   } else {
@@ -36,18 +29,6 @@ module.exports = (req, res, next) => {
 
 const trimUrl = (path) => {
   return path.endsWith("/")
-    ? path.slice(path.length - 1).toLowerCase()
+    ? path.slice(0, -1).toLowerCase()
     : path.toLowerCase();
-};
-
-const getSubforumUrl = (url, requestedPath) => {
-  url = url.split("{")[0];
-  requestedPath = requestedPath.replace(url, "");
-  return requestedPath.split("/")[0];
-};
-
-const getThreadId = (url, requestedPath) => {
-  url = url.split("{")[0];
-  requestedPath = requestedPath.replace(url, "");
-  return requestedPath.split("/")[0];
 };
