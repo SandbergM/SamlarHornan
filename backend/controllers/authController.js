@@ -21,7 +21,7 @@ const signIn = (req, res) => {
 
   if (user) {
     req.session.user = user;
-    return res.status(200).send({ authenticated: true });
+    return res.status(201).send({ authenticated: true });
   }
 
   res.status(401).send(`Unauthorized, wrong password or email`);

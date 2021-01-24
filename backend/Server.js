@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const store = require("better-express-store");
 
-const { PORT, SECRET } = require("./config");
+const { PORT, SECRET } = require("./config/index");
 
 module.exports = class Server {
   static hasBeenInstantiated = false;
@@ -20,12 +20,13 @@ module.exports = class Server {
     this.#addSession();
     this.#addAcl();
     this.#addJsonCheck();
-    this.#addLogger();
+    //this.#addLogger();
     this.#addRouter();
     this.#run();
   }
 
   #addSession() {
+    console.log(SECRET);
     this.app.use(
       session({
         secret: SECRET,
@@ -63,8 +64,8 @@ module.exports = class Server {
   }
 
   #run() {
-    this.app.listen(PORT || 8080, () => {
-      console.log(`Listening on port ${PORT || 8080}`);
+    this.app.listen(4001, () => {
+      console.log(`Listening on port ${4001}`);
     });
   }
 };

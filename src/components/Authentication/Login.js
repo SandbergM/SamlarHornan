@@ -7,7 +7,7 @@ const LoginModal = ({ toggleModalState }) => {
   const [password, setPassword] = useState(null);
   const [showError, setShowError] = useState(false);
 
-  const { setUser } = useContext(UserContext);
+  const { whoami } = useContext(UserContext);
 
   const login = async (e) => {
     e.preventDefault();
@@ -20,10 +20,13 @@ const LoginModal = ({ toggleModalState }) => {
       }),
       headers: { "Content-type": "application/json;charset=utf-8" },
     });
-    if (res.status === 200) {
-      setUser(await res.json());
-    } else {
-      setShowError(true);
+
+    switch (res.status) {
+      case 201:
+        whoami();
+        break;
+      default:
+        setShowError(true);
     }
   };
 

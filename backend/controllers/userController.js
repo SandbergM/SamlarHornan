@@ -19,11 +19,6 @@ const User = require("../models/User");
 const registerAccount = (req, res) => {
   const { email, username, password } = req.body;
   let requestIncomplete = requiredFields({ email, username });
-  let weakPassword = validPassword(password);
-
-  if (weakPassword) {
-    return res.status(400).send(weakPassword);
-  }
 
   if (requestIncomplete) {
     return res.status(400).send(`Missing : ${requestIncomplete}`);
@@ -33,6 +28,11 @@ const registerAccount = (req, res) => {
 
   if (badInput) {
     return res.status(400).send(badInput);
+  }
+
+  let weakPassword = validPassword(password);
+  if (weakPassword) {
+    return res.status(400).send(weakPassword);
   }
 
   if (!validEmail(email)) {
@@ -48,7 +48,8 @@ const registerAccount = (req, res) => {
   }
 
   let user = saveToDb("users", new User({ ...req.body }));
-  res.status(user ? 200 : 404).send(user);
+  console.log("DONE");
+  res.status(user ? 201 : 404).send({ userCreated: user ? true : false });
 };
 
 /*
@@ -67,6 +68,15 @@ const userParamSearch = (req, res) => {
 */
 const upgradeAccount = (req, res) => {
   const { userId, forumId } = req.body;
+
+  let requestIncomplete = requiredFields({ id: userId, forumId });
+
+  let badInput = validateDataInput(req.body);
+
+  if (requestIncomplete || badInput) {
+    return res.status(400).send(requestIncomplete || badInput);
+  }
+
   let user = findBy("users", { id: userId });
   let forum = findBy("forums", { id: forumId });
 
@@ -75,15 +85,27 @@ const upgradeAccount = (req, res) => {
   }
 
   let role = findBy("roles", { forumId });
-  addRole({ userId, roleId: role.id });
+
+  try {
+    addRole({ userId, roleId: role.id });
+  } catch (e) {
+    return res.status(400).send({ accountUpdated: false });
+  }
   res.status(200).send({ accountUpdated: true });
 };
 
 const downgradeAccount = (req, res) => {
   const { userId, roleId } = req.body;
-  console.log(userId, roleId);
   let user = findBy("users", { id: userId });
   let role = findBy("roles", { forumId: roleId });
+
+  let requestIncomplete = requiredFields({ userId, roleId });
+
+  let badInput = validateDataInput(req.body);
+
+  if (requestIncomplete || badInput) {
+    return res.status(400).send(requestIncomplete || badInput);
+  }
 
   if (!user || !role) {
     return res.status(400).send(`Not found`);
@@ -106,10 +128,10 @@ const deleteAccount = (req, res) => {
 };
 
 const validateDataInput = (params) => {
-  const { id, username, email, password, firstName, lastName } = params;
+  const { id, username, email, password, firstName, lastName, roleId } = params;
   return requiredDataTypes({
     string: { username, email, password, firstName, lastName },
-    number: { id },
+    number: { id, roleId },
   });
 };
 

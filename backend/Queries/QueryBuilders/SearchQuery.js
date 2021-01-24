@@ -10,9 +10,9 @@ module.exports = class SearchQuery {
   constructor({ TABLE, SELECT, LIKE, EQUAL, LIMIT, PAGE, SORT }) {
     this.#query += `SELECT ${SELECT ? SELECT : "*"} FROM ${TABLE.split(",")} `;
     this.#query += this.#searchCriterias({ LIKE, EQUAL });
+    this.#query += this.#sortBy(SORT || false) || "";
     this.#query += this.#limit(LIMIT || false) || "";
     this.#query += this.#page(PAGE || false) || "";
-    this.#query += this.#sortBy(SORT || false) || "";
     this.#params = { ...LIKE, ...EQUAL, ...LIMIT, ...PAGE, ...SORT };
   }
 

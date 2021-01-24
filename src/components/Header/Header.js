@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Collapse,
@@ -44,11 +44,13 @@ const Header = (props) => {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar></Nav>
           <div>
-            {!user ? (
+            {!user && (
               <NavbarText className="secondary-tc bold pointer ml-4 mr-4">
                 <AuthenticationModal showLogin={false} label={`Registrera`} />
               </NavbarText>
-            ) : (
+            )}
+
+            {user && user.roles.includes("ADMIN") && (
               <NavbarText className="secondary-tc bold pointer ml-4 mr-4">
                 <AdminControlPanel />
               </NavbarText>
